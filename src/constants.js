@@ -3,7 +3,7 @@ const RenderPosition = {
   AFTERBEGIN: 'afterbegin',
   BEFOREEND: 'beforeend',
   AFTEREND: 'afterend',
-}
+};
 
 const TRIP_COUNT = 3;
 

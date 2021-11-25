@@ -1,5 +1,5 @@
-export const createTripTemplate = () => {
-  return `<!-- Новая точка маршрута -->
+export const createTripTemplate = () => (
+  `<!-- Новая точка маршрута -->
   <li class="trip-events__item">
   <div class="event">
     <time class="event__date" datetime="2019-03-18">MAR 18</time>
@@ -37,4 +37,4 @@ export const createTripTemplate = () => {
     </button>
   </div>
 </li>`
-}
+);

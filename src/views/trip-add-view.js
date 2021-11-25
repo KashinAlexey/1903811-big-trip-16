@@ -1,5 +1,5 @@
-export const createTripAddTemplate = () => {
-  return `<!-- Форма добавления новой точки маршрута-->
+export const createTripAddTemplate = () => (
+  `<!-- Форма добавления новой точки маршрута-->
   <li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
       <header class="event__header">
@@ -162,4 +162,4 @@ export const createTripAddTemplate = () => {
       </section>
     </form>
   </li>`
-};
+);
