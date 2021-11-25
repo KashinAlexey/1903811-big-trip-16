@@ -5,7 +5,7 @@ import { createFilterTemplate } from './views/filter-view.js';
 import { createSortTemplate } from './views/sort-view.js';
 import { createTripListTemplate } from './views/trip-list-view.js';
 import { createTripTemplate } from './views/trip-view.js';
-import { createTripAddTemplate } from './views/trip-add-view.js'
+import { createTripAddTemplate } from './views/trip-add-view.js';
 import { createTripEditTemplate } from './views/trip-edit-view.js';
 
 const siteHeaderElement = document.querySelector('.page-header');
@@ -29,7 +29,4 @@ renderTemplate(tripEventsListElement, createTripEditTemplate(), RenderPosition.B
 for (let i = 0; i < TRIP_COUNT; i++) {
   renderTemplate(tripEventsListElement, createTripTemplate(), RenderPosition.BEFOREEND);
 }
-
-
-
 
