@@ -5,6 +5,6 @@ const RenderPosition = {
   AFTEREND: 'afterend',
 };
 
-const TRIP_COUNT = 3;
+const TRIP_COUNT = 20;
 
 export { RenderPosition, TRIP_COUNT };
