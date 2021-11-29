@@ -5,7 +5,7 @@ const MAX_OFFERS_COUNT = 5;
 const MAX_OFFER_PRICE = 10000;
 const MAX_PICTURES_COUNT = 6;
 const MAX_BASE_PRICE = 1000;
-const DAY_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+const DAY_FORMAT = 'DD/MM/YY HH:mm';
 const OFFER_TITLES =  ['Upgrade to comfort class', 'Add luggage', 'Add meal', 'Choose seats', 'Travel by train'];
 const TRIP_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 

@@ -42,7 +42,7 @@ export const generateWord = (min = 5, max = 10) => {
 
 export const generatePictureSrc = () => `http://picsum.photos/300/200?r=${generateRandomFloat(0, 1, 10)}`;
 
-export const generateArray = (size = 0, foo = () => {}) => Array.from({length: size}, foo);
+export const generateArray = (size = 0, foo = () => {}) => Array.from({length: generateRandomInteger(0, size)}, foo);
 
 export const generateId = (count = 10) => {
   let id='';

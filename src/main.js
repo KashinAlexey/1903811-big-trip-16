@@ -28,11 +28,11 @@ renderTemplate(tripEventsElement, createTripListTemplate(), RenderPosition.BEFOR
 
 const tripEventsListElement = tripEventsElement.querySelector('.trip-events__list');
 
-renderTemplate(tripEventsListElement, createTripAddTemplate(), RenderPosition.BEFOREEND);
+renderTemplate(tripEventsListElement, createTripAddTemplate(trips[0]), RenderPosition.BEFOREEND);
 
 renderTemplate(tripEventsListElement, createTripEditTemplate(), RenderPosition.BEFOREEND);
 
-for (let i = 0; i < TRIP_COUNT; i++) {
+for (let i = 1; i < TRIP_COUNT; i++) {
   renderTemplate(tripEventsListElement, createTripTemplate(trips[i]), RenderPosition.BEFOREEND);
 }
 
