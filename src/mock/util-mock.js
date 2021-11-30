@@ -1,7 +1,7 @@
 /*
 import { generateRandomInteger, generateRandomFloat, generateBoolean, generateText, generateWord, generateDate, generatePictureSrc, generateArray, getSing, generateId } from './generate-mock-data.js';
 
-import { isDateAfter, isDateBefore, isDateToday } from './generate-mock-data.js';
+import { isDateAfter, isDateBefore, isDateToday, formatDate } from './generate-mock-data.js';
 */
 
 import dayjs from 'dayjs';
@@ -40,9 +40,16 @@ export const generateWord = (min = 5, max = 10) => {
   return word.slice(0, generateRandomInteger(min, max));
 };
 
-export const generatePictureSrc = () => `http://picsum.photos/300/200?r=${generateRandomFloat(0, 1, 10)}`;
+export const generatePictureSrc = () => `http://picsum.photos/300/200?r=${generateRandomFloat(1, 2, 10)}`;
 
-export const generateArray = (size = 0, foo = () => {}) => Array.from({length: generateRandomInteger(0, size)}, foo);
+// TODO maxSize, minSize
+export const generateRndSizeArray = (size = 0, foo = () => {}) => Array.from({length: generateRandomInteger(0, size)}, foo);
+
+export const generateFixSizeArray = (size = 0, foo = () => {}) => Array.from({length: size}, foo);
+
+export const getRndArrayElement = (arr = [], empty) => arr[generateRandomInteger(0, arr.length-1)] || empty;
+
+export const getRndSizeArray = (arr) => arr.slice(0, generateRandomInteger(0, arr.length));
 
 export const generateId = (count = 10) => {
   let id='';
@@ -64,15 +71,29 @@ export const generateId = (count = 10) => {
   return id;
 };
 
-export const generateDate = (dayGap = 7, dayFormat = 'YYYY-MM-DD HH:mm:ss') => {
-  const humanizeDate = (date) => dayjs(date).format(dayFormat);
+export const generateDate = (dayGap = 7, hourGap = 12, minuteGap = 60) => dayjs().add(generateRandomInteger(Math.min(0, dayGap), Math.max(0, dayGap)), 'day').add(generateRandomInteger(Math.min(0, hourGap), Math.max(0, hourGap)), 'hour').add(generateRandomInteger(Math.min(0, minuteGap), Math.max(0, minuteGap)), 'minute').toDate();
 
-  return humanizeDate(dayjs().add(generateRandomInteger(Math.min(0, dayGap), Math.max(0, dayGap)), 'day').toDate());
-};
+export const formatDate = (date, dayFormat = 'YYYY-MM-DDTHH:mm:ss.sssZ') => dayjs(date).format(dayFormat);
 
 export const isDateAfter = (date) => date && dayjs().isAfter(date, 'D');
 
 export const isDateBefore = (date) => date && dayjs().isBefore(date, 'D');
 
 export const isDateToday = (date) => date && dayjs(date).isSame(dayjs(), 'D');
+
+export const calculateDateDiff = (startDay, endDay) => {
+  const dateDiff = Math.abs(startDay - endDay) / 1000 / 60;
+  let timeString;
+
+  if (dateDiff < 60 ) {
+    timeString = `${`0${dateDiff}`.slice(-2)}M`;
+  } else if (dateDiff < 1440) {
+    timeString = `${`0${Math.trunc(dateDiff / 60)}`.slice(-2)}H ${`0${Math.trunc(dateDiff % 60)}`.slice(-2)}M`;
+  } else {
+    timeString = `${`0${Math.trunc(dateDiff / 1440)}`.slice(-2)}D ${`0${Math.trunc((dateDiff % 1440) / 60)}`.slice(-2)}H ${`0${Math.trunc((dateDiff % 1440) % 60)}`.slice(-2)}M`;
+  }
+
+  return timeString;
+};
+
 

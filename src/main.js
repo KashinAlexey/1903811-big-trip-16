@@ -30,9 +30,9 @@ const tripEventsListElement = tripEventsElement.querySelector('.trip-events__lis
 
 renderTemplate(tripEventsListElement, createTripAddTemplate(trips[0]), RenderPosition.BEFOREEND);
 
-renderTemplate(tripEventsListElement, createTripEditTemplate(), RenderPosition.BEFOREEND);
+renderTemplate(tripEventsListElement, createTripEditTemplate(trips[1]), RenderPosition.BEFOREEND);
 
-for (let i = 1; i < TRIP_COUNT; i++) {
+for (let i = 2; i < TRIP_COUNT; i++) {
   renderTemplate(tripEventsListElement, createTripTemplate(trips[i]), RenderPosition.BEFOREEND);
 }
 
