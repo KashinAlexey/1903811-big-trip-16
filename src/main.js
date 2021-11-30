@@ -7,6 +7,7 @@ import { createTripListTemplate } from './views/trip-list-view.js';
 import { createTripTemplate } from './views/trip-view.js';
 import { createTripAddTemplate } from './views/trip-add-view.js';
 import { createTripEditTemplate } from './views/trip-edit-view.js';
+import { createTripInfoTemplate } from './views/trip-info-view.js';
 import { generateTrip } from './mock/trip.js';
 //import { generateFilter } from './mock/filter.js';
 
@@ -20,6 +21,8 @@ const tripMainElement = siteHeaderElement.querySelector('.trip-main');
 const tripNavigationElement = tripMainElement.querySelector('.trip-controls__navigation');
 const tripFiltersElement = tripMainElement.querySelector('.trip-controls__filters');
 const tripEventsElement = siteMainElement.querySelector('.trip-events');
+
+renderTemplate(tripMainElement, createTripInfoTemplate(trips), RenderPosition.AFTERBEGIN);
 
 renderTemplate(tripNavigationElement, createTripNavigationTemplate(), RenderPosition.BEFOREEND);
 renderTemplate(tripFiltersElement, createFilterTemplate(), RenderPosition.BEFOREEND);

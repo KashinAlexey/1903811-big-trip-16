@@ -2,7 +2,7 @@ import { formatDate, calculateDateDiff } from '../mock/util-mock.js';
 import { DAY_TIME_FORMAT, TIME_FORMAT, DAY_FORMAT } from '../constants.js';
 
 export const createTripTemplate = (trip) => {
-  const {type, dateFrom, dateTo, destination, basePrice, offers} = trip;
+  const {type, dateFrom, dateTo, destination, basePrice, isFavorite, offers} = trip;
 
   return `<!-- Новая точка маршрута -->
   <li class="trip-events__item">
@@ -10,7 +10,7 @@ export const createTripTemplate = (trip) => {
       <time class="event__date" datetime="${formatDate(dateFrom, DAY_TIME_FORMAT)}">
         ${formatDate(dateFrom, DAY_FORMAT)}
       </time>
-      
+
       <div class="event__type">
         <img
           class="event__type-icon"
@@ -65,7 +65,7 @@ export const createTripTemplate = (trip) => {
         </li>`).join('')}
       </ul>
 
-      <button class="event__favorite-btn event__favorite-btn--active" type="button">
+      <button class="event__favorite-btn ${isFavorite ? 'event__favorite-btn--active' : ''}" type="button">
         <span class="visually-hidden">
           Add to favorite
         </span>
