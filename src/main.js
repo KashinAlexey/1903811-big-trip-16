@@ -26,8 +26,6 @@ const tripEventsElement = siteMainElement.querySelector('.trip-events');
 renderTemplate(tripNavigationElement, createTripNavigationTemplate(), RenderPosition.BEFOREEND);
 renderTemplate(tripFiltersElement, createFilterTemplate(), RenderPosition.BEFOREEND);
 
-renderTemplate(tripEventsElement, createTripListTemplate(), RenderPosition.BEFOREEND);
-
 if (trips.length === 0) {
   renderTemplate(tripEventsElement, createNoTripTemplate(), RenderPosition.AFTERBEGIN);
 } else {
@@ -35,6 +33,7 @@ if (trips.length === 0) {
 
   renderTemplate(tripEventsElement, createSortTemplate(), RenderPosition.BEFOREEND);
 
+  renderTemplate(tripEventsElement, createTripListTemplate(), RenderPosition.BEFOREEND);
 
   const tripEventsListElement = tripEventsElement.querySelector('.trip-events__list');
 

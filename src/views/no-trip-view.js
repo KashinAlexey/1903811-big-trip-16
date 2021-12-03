@@ -1,11 +1,20 @@
-export const createNoTripTemplate = () => (
-  `<!-- Лист без данных -->
-  <p class="trip-events__msg">Click New Event to create your first point</p>
+export const createNoTripTemplate = (filter) => {
+  let noTripText = null;
 
-  <!--
-    Значение отображаемого текста зависит от выбранного фильтра:
-      * Everthing – 'Click New Event to create your first point'
-      * Past — 'There are no past events now';
-      * Future — 'There are no future events now'.
-  -->`
-);
+  switch (filter) {
+    case 'Everthing':
+      noTripText =  'Click New Event to create your first point';
+      break;
+    case 'Past':
+      noTripText =  'There are no past events now';
+      break;
+    case 'Future':
+      noTripText =  'There are no future events now';
+      break;
+    default:
+      noTripText = 'Loading...';
+  }
+
+  return `<!-- Лист без данных -->
+  <p class="trip-events__msg">${noTripText}</p>`;
+};
