@@ -23,10 +23,6 @@ const tripNavigationElement = tripMainElement.querySelector('.trip-controls__nav
 const tripFiltersElement = tripMainElement.querySelector('.trip-controls__filters');
 const tripEventsElement = siteMainElement.querySelector('.trip-events');
 
-render(tripNavigationElement, new TripNavigationView().element, RenderPosition.BEFOREEND);
-
-render(tripFiltersElement, new FilterView().element, RenderPosition.BEFOREEND);
-
 const renderTrip = (tripListElement, trip) => {
   const tripComponent = new TripView(trip);
   const tripEditComponent = new TripEditView(trip);
@@ -70,22 +66,26 @@ const renderTrip = (tripListElement, trip) => {
   render(tripListElement, tripComponent.element, RenderPosition.BEFOREEND);
 };
 
-render(tripEventsElement, new TripListView().element, RenderPosition.BEFOREEND);
+const renderTripEvents = (tripEventsList, tripEvents) => {
+  if (trips.length === 0) {
+    render(tripEventsElement, new NoTripView('Everthing').element, RenderPosition.BEFOREEND);
 
-const tripEventsListElement = tripEventsElement.querySelector('.trip-events__list');
+    tripMainElement.querySelector('.trip-main__event-add-btn').addEventListener('click', () => {
+      // onClickNewTripBtn
+    });
+  } else {
+    render(tripMainElement, new TripInfoView(trips).element, RenderPosition.AFTERBEGIN);
+    render(tripEventsElement, new SortView().element, RenderPosition.AFTERBEGIN);
+    render(tripEventsElement, tripEventsList, RenderPosition.BEFOREEND);
 
-if (trips.length === 0) {
-  render(tripEventsElement, new NoTripView('Everthing').element, RenderPosition.BEFOREEND);
-
-  tripMainElement.querySelector('.trip-main__event-add-btn').addEventListener('click', () => {
-    // onClickNewTripBtn
-  });
-} else {
-  render(tripMainElement, new TripInfoView(trips).element, RenderPosition.AFTERBEGIN);
-
-  render(tripEventsElement, new SortView().element, RenderPosition.AFTERBEGIN);
-
-  for (let i = 0; i < TRIP_COUNT; i++) {
-    renderTrip(tripEventsListElement, trips[i]);
+    for (let i = 0; i < TRIP_COUNT; i++) {
+      renderTrip(tripEventsList, tripEvents[i]);
+    }
   }
-}
+};
+
+render(tripNavigationElement, new TripNavigationView().element, RenderPosition.BEFOREEND);
+
+render(tripFiltersElement, new FilterView().element, RenderPosition.BEFOREEND);
+
+renderTripEvents(new TripListView().element, trips);
