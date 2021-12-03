@@ -1,11 +1,11 @@
 import { formatDate, calculateDateDiff } from '../mock/util-mock.js';
 import { DAY_TIME_FORMAT, TIME_FORMAT, DAY_FORMAT } from '../constants.js';
+import { createElement } from '../util.js';
 
-export const createTripTemplate = (trip) => {
+const createTripTemplate = (trip) => {
   const {type, dateFrom, dateTo, destination, basePrice, isFavorite, offers} = trip;
 
-  return `<!-- Новая точка маршрута -->
-  <li class="trip-events__item">
+  return `<li class="trip-events__item">
     <div class="event">
       <time class="event__date" datetime="${formatDate(dateFrom, DAY_TIME_FORMAT)}">
         ${formatDate(dateFrom, DAY_FORMAT)}
@@ -86,3 +86,28 @@ export const createTripTemplate = (trip) => {
     </div>
   </li>`;
 };
+
+export default class TripView {
+  #element = null;
+  #trip = null;
+
+  constructor(trip) {
+    this.#trip = trip;
+  }
+
+  get template() {
+    return createTripTemplate(this.#trip);
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}

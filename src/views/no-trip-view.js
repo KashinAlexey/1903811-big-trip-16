@@ -1,4 +1,6 @@
-export const createNoTripTemplate = (filter) => {
+import { createElement } from '../util.js';
+
+const createNoTripTemplate = (filter) => {
   let noTripText = null;
 
   switch (filter) {
@@ -15,6 +17,29 @@ export const createNoTripTemplate = (filter) => {
       noTripText = 'Loading...';
   }
 
-  return `<!-- Лист без данных -->
-  <p class="trip-events__msg">${noTripText}</p>`;
+  return `<p class="trip-events__msg">${noTripText}</p>`;
 };
+export default class NoTripView {
+  #element = null;
+  #filter = null;
+
+  constructor(filter) {
+    this.#filter = filter;
+  }
+
+  get template() {
+    return createNoTripTemplate(this.#filter);
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}

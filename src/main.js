@@ -1,14 +1,14 @@
 import { RenderPosition, TRIP_COUNT } from './constants.js';
-import { renderTemplate } from './util.js';
-import { createTripNavigationTemplate } from './views/navigation-view.js';
-import { createFilterTemplate } from './views/filter-view.js';
-import { createSortTemplate } from './views/sort-view.js';
-import { createTripListTemplate } from './views/trip-list-view.js';
-import { createNoTripTemplate } from './views/no-trip-view.js';
-import { createTripTemplate } from './views/trip-view.js';
-import { createTripAddTemplate } from './views/trip-add-view.js';
-import { createTripEditTemplate } from './views/trip-edit-view.js';
-import { createTripInfoTemplate } from './views/trip-info-view.js';
+import { render } from './util.js';
+import TripNavigationView from './views/navigation-view.js';
+import FilterView from './views/filter-view.js';
+import SortView from './views/sort-view.js';
+import TripListView from './views/trip-list-view.js';
+import NoTripView from './views/no-trip-view.js';
+import TripView from './views/trip-view.js';
+import TripAddView from './views/trip-add-view.js';
+import TripEditView from './views/trip-edit-view.js';
+import TripInfoView from './views/trip-info-view.js';
 import { generateTrip } from './mock/trip.js';
 //import { generateFilter } from './mock/filter.js';
 
@@ -23,25 +23,27 @@ const tripNavigationElement = tripMainElement.querySelector('.trip-controls__nav
 const tripFiltersElement = tripMainElement.querySelector('.trip-controls__filters');
 const tripEventsElement = siteMainElement.querySelector('.trip-events');
 
-renderTemplate(tripNavigationElement, createTripNavigationTemplate(), RenderPosition.BEFOREEND);
-renderTemplate(tripFiltersElement, createFilterTemplate(), RenderPosition.BEFOREEND);
+render(tripNavigationElement, new TripNavigationView().element, RenderPosition.BEFOREEND);
+
+render(tripFiltersElement, new FilterView().element, RenderPosition.BEFOREEND);
 
 if (trips.length === 0) {
-  renderTemplate(tripEventsElement, createNoTripTemplate(), RenderPosition.AFTERBEGIN);
+  render(tripEventsElement, new NoTripView('Everthing').element, RenderPosition.BEFOREEND);
 } else {
-  renderTemplate(tripMainElement, createTripInfoTemplate(trips), RenderPosition.AFTERBEGIN);
+  render(tripMainElement, new TripInfoView(trips).element, RenderPosition.AFTERBEGIN);
 
-  renderTemplate(tripEventsElement, createSortTemplate(), RenderPosition.BEFOREEND);
+  render(tripEventsElement, new SortView().element, RenderPosition.BEFOREEND);
 
-  renderTemplate(tripEventsElement, createTripListTemplate(), RenderPosition.BEFOREEND);
+  render(tripEventsElement, new TripListView().element, RenderPosition.BEFOREEND);
 
   const tripEventsListElement = tripEventsElement.querySelector('.trip-events__list');
 
-  renderTemplate(tripEventsListElement, createTripAddTemplate(trips[0]), RenderPosition.BEFOREEND);
+  render(tripEventsListElement, new TripAddView(trips[0]).element, RenderPosition.BEFOREEND);
 
-  renderTemplate(tripEventsListElement, createTripEditTemplate(trips[1]), RenderPosition.BEFOREEND);
+  render(tripEventsListElement, new TripEditView(trips[1]).element, RenderPosition.BEFOREEND);
 
   for (let i = 2; i < TRIP_COUNT; i++) {
-    renderTemplate(tripEventsListElement, createTripTemplate(trips[i]), RenderPosition.BEFOREEND);
+    render(tripEventsListElement, new TripView(trips[i]).element, RenderPosition.BEFOREEND);
+
   }
 }
