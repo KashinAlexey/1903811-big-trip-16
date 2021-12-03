@@ -4,6 +4,7 @@ import { createTripNavigationTemplate } from './views/navigation-view.js';
 import { createFilterTemplate } from './views/filter-view.js';
 import { createSortTemplate } from './views/sort-view.js';
 import { createTripListTemplate } from './views/trip-list-view.js';
+import { createNoTripTemplate } from './views/no-trip-view.js';
 import { createTripTemplate } from './views/trip-view.js';
 import { createTripAddTemplate } from './views/trip-add-view.js';
 import { createTripEditTemplate } from './views/trip-edit-view.js';
@@ -22,20 +23,26 @@ const tripNavigationElement = tripMainElement.querySelector('.trip-controls__nav
 const tripFiltersElement = tripMainElement.querySelector('.trip-controls__filters');
 const tripEventsElement = siteMainElement.querySelector('.trip-events');
 
-renderTemplate(tripMainElement, createTripInfoTemplate(trips), RenderPosition.AFTERBEGIN);
-
 renderTemplate(tripNavigationElement, createTripNavigationTemplate(), RenderPosition.BEFOREEND);
 renderTemplate(tripFiltersElement, createFilterTemplate(), RenderPosition.BEFOREEND);
-renderTemplate(tripEventsElement, createSortTemplate(), RenderPosition.BEFOREEND);
+
 renderTemplate(tripEventsElement, createTripListTemplate(), RenderPosition.BEFOREEND);
 
-const tripEventsListElement = tripEventsElement.querySelector('.trip-events__list');
+if (trips.length === 0) {
+  renderTemplate(tripEventsElement, createNoTripTemplate(), RenderPosition.AFTERBEGIN);
+} else {
+  renderTemplate(tripMainElement, createTripInfoTemplate(trips), RenderPosition.AFTERBEGIN);
 
-renderTemplate(tripEventsListElement, createTripAddTemplate(trips[0]), RenderPosition.BEFOREEND);
+  renderTemplate(tripEventsElement, createSortTemplate(), RenderPosition.BEFOREEND);
 
-renderTemplate(tripEventsListElement, createTripEditTemplate(trips[1]), RenderPosition.BEFOREEND);
 
-for (let i = 2; i < TRIP_COUNT; i++) {
-  renderTemplate(tripEventsListElement, createTripTemplate(trips[i]), RenderPosition.BEFOREEND);
+  const tripEventsListElement = tripEventsElement.querySelector('.trip-events__list');
+
+  renderTemplate(tripEventsListElement, createTripAddTemplate(trips[0]), RenderPosition.BEFOREEND);
+
+  renderTemplate(tripEventsListElement, createTripEditTemplate(trips[1]), RenderPosition.BEFOREEND);
+
+  for (let i = 2; i < TRIP_COUNT; i++) {
+    renderTemplate(tripEventsListElement, createTripTemplate(trips[i]), RenderPosition.BEFOREEND);
+  }
 }
-
