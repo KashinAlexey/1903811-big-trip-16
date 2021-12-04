@@ -1,7 +1,7 @@
 import { formatDate } from '../mock/util-mock.js';
 import { TRIP_TYPES, OFFER_TITLE_TO_NAME, DAY_TIME_FORMAT } from '../constants.js';
 import { destinationsList } from '../mock/trip.js';
-import { getKeyByValue } from '../util.js';
+import { getKeyByValue, createElement } from '../util.js';
 
 const createTripEditTypeListTemplate = () =>(`
   <div class="event__type-list">
@@ -15,7 +15,7 @@ const createTripEditTypeListTemplate = () =>(`
           id="event-type-${type}-1"
           class="event__type-input  visually-hidden"
           type="radio"
-          name="event-${type}"
+          name="event-type"
           value="${type}"
         >
         <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">
@@ -84,7 +84,7 @@ const createTripEditDestinationTemplate = (destination) => {
   </section>`;
 };
 
-export const createTripEditTemplate = (trip) => {
+const createTripEditTemplate = (trip) => {
   const {type, dateFrom, dateTo, destination, basePrice, offers} = trip;
 
   const destinationTemplate = createTripEditDestinationTemplate(destination);
@@ -95,8 +95,7 @@ export const createTripEditTemplate = (trip) => {
 
   const destinationListTemplate = createTripEditDestinationListTemplate();
 
-  return `<!-- Форма редактирования точки маршрута-->
-  <li class="trip-events__item">
+  return `<li class="trip-events__item">
     <form
       class="event event--edit"
       action="#"
@@ -199,7 +198,7 @@ export const createTripEditTemplate = (trip) => {
           </span>
         </button>
       </header>
-      
+
       <section class="event__details">
         ${offerTemplate}
 
@@ -207,3 +206,27 @@ export const createTripEditTemplate = (trip) => {
     </form>
   </li>`;
 };
+export default class TripEditView {
+  #element = null;
+  #trip = null;
+
+  constructor(trip) {
+    this.#trip = trip;
+  }
+
+  get template() {
+    return createTripEditTemplate(this.#trip);
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}

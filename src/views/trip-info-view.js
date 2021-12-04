@@ -1,5 +1,6 @@
 import { formatDate } from '../mock/util-mock.js';
 import { DAY_FORMAT } from '../constants.js';
+import {createElement} from '../util.js';
 
 const updateTripInfoCost = (trips) => {
   let cost = 0;
@@ -40,9 +41,7 @@ const updateTripInfoDates = (trips) => {
   return date;
 };
 
-
-export const createTripInfoTemplate = (trips) => (`<!-- Блок информации -->
-  <section class="trip-main__trip-info  trip-info">
+const createTripInfoTemplate = (trips) => (`<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
       <h1 class="trip-info__title">
         ${updateTripInfoTitle(trips)}
@@ -58,3 +57,27 @@ export const createTripInfoTemplate = (trips) => (`<!-- Блок информа�
     </p>
   </section>`
 );
+export default class TripInfoView {
+  #element = null;
+  #trip = null;
+
+  constructor(trip) {
+    this.#trip = trip;
+  }
+
+  get template() {
+    return createTripInfoTemplate(this.#trip);
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}

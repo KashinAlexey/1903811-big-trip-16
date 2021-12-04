@@ -1,7 +1,7 @@
 import { formatDate } from '../mock/util-mock.js';
 import { TRIP_TYPES, OFFER_TITLE_TO_NAME, DAY_TIME_FORMAT } from '../constants.js';
 import { destinationsList } from '../mock/trip.js';
-import { getKeyByValue } from '../util.js';
+import { getKeyByValue, createElement } from '../util.js';
 
 const createTripAddTypeListTemplate = () =>(`
   <div class="event__type-list">
@@ -94,7 +94,7 @@ const createTripAddDestinationTemplate = (destination) => {
   </section>`;
 };
 
-export const createTripAddTemplate = (trip) => {
+const createTripAddTemplate = (trip) => {
   const {type, dateFrom, dateTo, destination, basePrice, offers} = trip;
 
   const destinationTemplate = createTripAddDestinationTemplate(destination);
@@ -105,8 +105,7 @@ export const createTripAddTemplate = (trip) => {
 
   const destinationListTemplate = createTripAddDestinationListTemplate();
 
-  return `<!-- Форма добавления новой точки маршрута-->
-  <li class="trip-events__item">
+  return `<li class="trip-events__item">
     <form
       class="event event--edit"
       action="#"
@@ -209,3 +208,27 @@ export const createTripAddTemplate = (trip) => {
     </form>
   </li>`;
 };
+export default class TripAddView {
+  #element = null;
+  #trip = null;
+
+  constructor(trip) {
+    this.#trip = trip;
+  }
+
+  get template() {
+    return createTripAddTemplate(this.#trip);
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
