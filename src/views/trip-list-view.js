@@ -1,25 +1,12 @@
-import {createElement} from '../util.js';
+import AbstractView from './abstract-view.js';
 
 const createTripListTemplate = () => (
   '<ul class="trip-events__list"></ul>'
 );
 
-export default class TripListView {
-  #element = null;
+export default class TripListView extends AbstractView {
 
   get template() {
     return createTripListTemplate();
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

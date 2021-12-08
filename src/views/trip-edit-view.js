@@ -1,7 +1,10 @@
-import { formatDate } from '../mock/util-mock.js';
-import { TRIP_TYPES, OFFER_TITLE_TO_NAME, DAY_TIME_FORMAT } from '../constants.js';
+import AbstractView from './abstract-view.js';
+import { formatDate } from '../utils/common.js';
+import { TRIP_TYPES } from '../constants.js';
+import { OFFER_TITLE_TO_NAME } from '../constants.js';
+import { DAY_TIME_FORMAT } from '../constants.js';
 import { destinationsList } from '../mock/trip.js';
-import { getKeyByValue, createElement } from '../util.js';
+import { getKeyByValue } from '../utils/common.js';
 
 const createTripEditTypeListTemplate = () =>(`
   <div class="event__type-list">
@@ -206,11 +209,11 @@ const createTripEditTemplate = (trip) => {
     </form>
   </li>`;
 };
-export default class TripEditView {
-  #element = null;
+export default class TripEditView extends AbstractView {
   #trip = null;
 
   constructor(trip) {
+    super();
     this.#trip = trip;
   }
 
@@ -218,15 +221,33 @@ export default class TripEditView {
     return createTripEditTemplate(this.#trip);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
+  setFormSubmitHandler = (callback) => {
+    this._callback.formSubmit = callback;
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   }
 
-  removeElement() {
-    this.#element = null;
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  }
+
+  setEditClickHandler = (callback) => {
+    this._callback.editClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
+  }
+
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.editClick();
+  }
+
+  setDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteClickHandler);
+  }
+
+  #deleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteClick();
   }
 }

@@ -1,5 +1,7 @@
-import { RenderPosition, TRIP_COUNT } from './constants.js';
-import { render } from './util.js';
+import { RenderPosition } from './constants.js';
+import { TRIP_COUNT } from './constants.js';
+import { render } from './utils/render.js';
+import { replace } from './utils/render.js';
 import TripNavigationView from './views/navigation-view.js';
 import FilterView from './views/filter-view.js';
 import SortView from './views/sort-view.js';
@@ -28,11 +30,11 @@ const renderTrip = (tripListElement, trip) => {
   const tripEditComponent = new TripEditView(trip);
 
   const replaceTripToForm = () => {
-    tripListElement.replaceChild(tripEditComponent.element, tripComponent.element);
+    replace(tripEditComponent, tripComponent);
   };
 
   const replaceFormToTrip = () => {
-    tripListElement.replaceChild(tripComponent.element, tripEditComponent.element);
+    replace(tripComponent, tripEditComponent);
   };
 
   const onEscKeyDown = (evt) => {
@@ -43,23 +45,22 @@ const renderTrip = (tripListElement, trip) => {
     }
   };
 
-  tripComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+  tripComponent.setEditClickHandler(() => {
     replaceTripToForm();
     document.addEventListener('keydown', onEscKeyDown);
   });
 
-  tripEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
-    evt.preventDefault();
+  tripEditComponent.setFormSubmitHandler(() => {
     replaceFormToTrip();
     document.removeEventListener('keydown', onEscKeyDown);
   });
 
-  tripEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+  tripEditComponent.setEditClickHandler(() => {
     replaceFormToTrip();
     document.removeEventListener('keydown', onEscKeyDown);
   });
 
-  tripEditComponent.element.querySelector('.event__reset-btn').addEventListener('click', () => {
+  tripEditComponent.setDeleteClickHandler(() => {
     // onClickDeleteEditBtn
   });
 
@@ -68,14 +69,14 @@ const renderTrip = (tripListElement, trip) => {
 
 const renderTripEvents = (tripEventsList, tripEvents) => {
   if (trips.length === 0) {
-    render(tripEventsElement, new NoTripView('Everthing').element, RenderPosition.BEFOREEND);
+    render(tripEventsElement, new NoTripView('Everthing'), RenderPosition.BEFOREEND);
 
     tripMainElement.querySelector('.trip-main__event-add-btn').addEventListener('click', () => {
       // onClickNewTripBtn
     });
   } else {
-    render(tripMainElement, new TripInfoView(trips).element, RenderPosition.AFTERBEGIN);
-    render(tripEventsElement, new SortView().element, RenderPosition.AFTERBEGIN);
+    render(tripMainElement, new TripInfoView(trips), RenderPosition.AFTERBEGIN);
+    render(tripEventsElement, new SortView(), RenderPosition.AFTERBEGIN);
     render(tripEventsElement, tripEventsList, RenderPosition.BEFOREEND);
 
     for (let i = 0; i < TRIP_COUNT; i++) {
@@ -84,8 +85,8 @@ const renderTripEvents = (tripEventsList, tripEvents) => {
   }
 };
 
-render(tripNavigationElement, new TripNavigationView().element, RenderPosition.BEFOREEND);
+render(tripNavigationElement, new TripNavigationView(), RenderPosition.BEFOREEND);
 
-render(tripFiltersElement, new FilterView().element, RenderPosition.BEFOREEND);
+render(tripFiltersElement, new FilterView(), RenderPosition.BEFOREEND);
 
-renderTripEvents(new TripListView().element, trips);
+renderTripEvents(new TripListView(), trips);

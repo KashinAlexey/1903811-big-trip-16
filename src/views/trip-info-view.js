@@ -1,6 +1,6 @@
-import { formatDate } from '../mock/util-mock.js';
+import AbstractView from './abstract-view.js';
+import { formatDate } from '../utils/common.js';
 import { DAY_FORMAT } from '../constants.js';
-import {createElement} from '../util.js';
 
 const updateTripInfoCost = (trips) => {
   let cost = 0;
@@ -57,27 +57,15 @@ const createTripInfoTemplate = (trips) => (`<section class="trip-main__trip-info
     </p>
   </section>`
 );
-export default class TripInfoView {
-  #element = null;
+export default class TripInfoView extends AbstractView {
   #trip = null;
 
   constructor(trip) {
+    super();
     this.#trip = trip;
   }
 
   get template() {
     return createTripInfoTemplate(this.#trip);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

@@ -1,6 +1,9 @@
-import { formatDate, calculateDateDiff } from '../mock/util-mock.js';
-import { DAY_TIME_FORMAT, TIME_FORMAT, DAY_FORMAT } from '../constants.js';
-import { createElement } from '../util.js';
+import AbstractView from './abstract-view.js';
+import { formatDate } from '../utils/common.js';
+import { calculateDateDiff } from '../utils/common.js';
+import { DAY_TIME_FORMAT } from '../constants.js';
+import { TIME_FORMAT } from '../constants.js';
+import { DAY_FORMAT } from '../constants.js';
 
 const createTripTemplate = (trip) => {
   const {type, dateFrom, dateTo, destination, basePrice, isFavorite, offers} = trip;
@@ -87,11 +90,11 @@ const createTripTemplate = (trip) => {
   </li>`;
 };
 
-export default class TripView {
-  #element = null;
+export default class TripView extends AbstractView {
   #trip = null;
 
   constructor(trip) {
+    super();
     this.#trip = trip;
   }
 
@@ -99,15 +102,13 @@ export default class TripView {
     return createTripTemplate(this.#trip);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
+  setEditClickHandler = (callback) => {
+    this._callback.editClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
   }
 
-  removeElement() {
-    this.#element = null;
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.editClick();
   }
 }
