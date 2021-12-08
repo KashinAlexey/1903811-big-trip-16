@@ -1,6 +1,9 @@
 import AbstractView from './abstract-view.js';
-import { formatDate, calculateDateDiff } from '../utils/common.js';
-import { DAY_TIME_FORMAT, TIME_FORMAT, DAY_FORMAT } from '../constants.js';
+import { formatDate } from '../utils/common.js';
+import { calculateDateDiff } from '../utils/common.js';
+import { DAY_TIME_FORMAT } from '../constants.js';
+import { TIME_FORMAT } from '../constants.js';
+import { DAY_FORMAT } from '../constants.js';
 
 const createTripTemplate = (trip) => {
   const {type, dateFrom, dateTo, destination, basePrice, isFavorite, offers} = trip;

@@ -1,5 +1,7 @@
-import { RenderPosition, TRIP_COUNT } from './constants.js';
-import { render, replace } from './utils/render.js';
+import { RenderPosition } from './constants.js';
+import { TRIP_COUNT } from './constants.js';
+import { render } from './utils/render.js';
+import { replace } from './utils/render.js';
 import TripNavigationView from './views/navigation-view.js';
 import FilterView from './views/filter-view.js';
 import SortView from './views/sort-view.js';
