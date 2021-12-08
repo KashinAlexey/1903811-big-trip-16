@@ -43,23 +43,22 @@ const renderTrip = (tripListElement, trip) => {
     }
   };
 
-  tripComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+  tripComponent.setEditClickHandler(() => {
     replaceTripToForm();
     document.addEventListener('keydown', onEscKeyDown);
   });
 
-  tripEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
-    evt.preventDefault();
+  tripEditComponent.setFormSubmitHandler(() => {
     replaceFormToTrip();
     document.removeEventListener('keydown', onEscKeyDown);
   });
 
-  tripEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+  tripEditComponent.setEditClickHandler(() => {
     replaceFormToTrip();
     document.removeEventListener('keydown', onEscKeyDown);
   });
 
-  tripEditComponent.element.querySelector('.event__reset-btn').addEventListener('click', () => {
+  tripEditComponent.setDeleteClickHandler(() => {
     // onClickDeleteEditBtn
   });
 
