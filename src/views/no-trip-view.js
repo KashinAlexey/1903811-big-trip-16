@@ -1,4 +1,4 @@
-import { createElement } from '../util.js';
+import AbstractView from './abstract-view.js';
 
 const createNoTripTemplate = (filter) => {
   let noTripText = null;
@@ -19,27 +19,15 @@ const createNoTripTemplate = (filter) => {
 
   return `<p class="trip-events__msg">${noTripText}</p>`;
 };
-export default class NoTripView {
-  #element = null;
+export default class NoTripView extends AbstractView {
   #filter = null;
 
   constructor(filter) {
+    super();
     this.#filter = filter;
   }
 
   get template() {
     return createNoTripTemplate(this.#filter);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

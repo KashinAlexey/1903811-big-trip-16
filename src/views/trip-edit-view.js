@@ -1,7 +1,8 @@
-import { formatDate } from '../mock/util-mock.js';
+import AbstractView from './abstract-view.js';
+import { formatDate } from '../utils/common.js';
 import { TRIP_TYPES, OFFER_TITLE_TO_NAME, DAY_TIME_FORMAT } from '../constants.js';
 import { destinationsList } from '../mock/trip.js';
-import { getKeyByValue, createElement } from '../util.js';
+import { getKeyByValue } from '../utils/common.js';
 
 const createTripEditTypeListTemplate = () =>(`
   <div class="event__type-list">
@@ -206,27 +207,15 @@ const createTripEditTemplate = (trip) => {
     </form>
   </li>`;
 };
-export default class TripEditView {
-  #element = null;
+export default class TripEditView extends AbstractView {
   #trip = null;
 
   constructor(trip) {
+    super();
     this.#trip = trip;
   }
 
   get template() {
     return createTripEditTemplate(this.#trip);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

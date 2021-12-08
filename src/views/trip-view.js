@@ -1,6 +1,6 @@
-import { formatDate, calculateDateDiff } from '../mock/util-mock.js';
+import AbstractView from './abstract-view.js';
+import { formatDate, calculateDateDiff } from '../utils/common.js';
 import { DAY_TIME_FORMAT, TIME_FORMAT, DAY_FORMAT } from '../constants.js';
-import { createElement } from '../util.js';
 
 const createTripTemplate = (trip) => {
   const {type, dateFrom, dateTo, destination, basePrice, isFavorite, offers} = trip;
@@ -87,27 +87,15 @@ const createTripTemplate = (trip) => {
   </li>`;
 };
 
-export default class TripView {
-  #element = null;
+export default class TripView extends AbstractView {
   #trip = null;
 
   constructor(trip) {
+    super();
     this.#trip = trip;
   }
 
   get template() {
     return createTripTemplate(this.#trip);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
