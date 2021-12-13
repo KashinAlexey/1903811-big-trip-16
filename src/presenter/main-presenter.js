@@ -1,29 +1,30 @@
 import TripMainPresenter from '../presenter/trip-main-presenter.js';
 import TripEventsPresenter from '../presenter/trip-events-presenter.js';
 import StatisticPresenter from '../presenter/statistic-presenter.js';
+import { TRIP_COUNT } from '../constants.js';
+import { generateTrip } from '../mock/trip.js';
 
 export default class MainPresenter {
 
-  #tripMainElement = null;
-  #tripNavigationElement = null;
-  #tripFiltersElement = null;
-  #tripEventsElement = null;
+  #trips = null;
 
-  constructor(tripMainElement, tripNavigationElement, tripFiltersElement, tripEventsElement) {
-    this.#tripMainElement = tripMainElement;
-    this.#tripNavigationElement = tripNavigationElement;
-    this.#tripFiltersElement = tripFiltersElement;
-    this.#tripEventsElement = tripEventsElement;
-  }
+  #siteHeaderElement = document.querySelector('.page-header');
+  #siteMainElement = document.querySelector('.page-main');
+  #tripMainElement = this.#siteHeaderElement.querySelector('.trip-main');
+  #tripNavigationElement = this.#tripMainElement.querySelector('.trip-controls__navigation');
+  #tripFiltersElement = this.#tripMainElement.querySelector('.trip-controls__filters');
+  #tripEventsElement = this.#siteMainElement.querySelector('.trip-events');
 
-  init = (trips) => {
-    const tripMainPresenter = new TripMainPresenter(this.#tripMainElement, this.#tripNavigationElement, this.#tripFiltersElement);
-    const tripEventsPresenter = new TripEventsPresenter(this.#tripEventsElement);
-    const statisticPresenter = new StatisticPresenter();
+  tripMainPresenter = new TripMainPresenter(this.#tripMainElement, this.#tripNavigationElement, this.#tripFiltersElement);
+  tripEventsPresenter = new TripEventsPresenter(this.#tripEventsElement);
+  statisticPresenter = new StatisticPresenter();
 
-    tripMainPresenter.init(trips);
-    tripEventsPresenter.init(trips);
-    statisticPresenter.init();
+  init = () => {
+    this.#trips = this.getData();
+
+    this.tripMainPresenter.init(this.#trips);
+    this.tripEventsPresenter.init(this.#trips);
+    this.statisticPresenter.init();
   }
 
   renderTripMain = () => {}
@@ -35,4 +36,6 @@ export default class MainPresenter {
   destroyTripEvents = () => {}
 
   destroyStatistic = () => {}
+
+  getData = () => Array.from({length: TRIP_COUNT}, generateTrip);
 }
