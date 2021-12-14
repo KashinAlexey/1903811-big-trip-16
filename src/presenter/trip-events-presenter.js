@@ -4,13 +4,14 @@ import NoTripView from '../views/no-trip-view.js';
 import SortView from '../views/sort-view.js';
 import TripListView from '../views/trip-list-view';
 import { TRIP_COUNT } from '../constants.js';
+import { updateItem } from '../utils/common.js';
 import TripItemPresenter from './trip-item-presenter.js';
 export default class TripEventsPresenter {
-
   #tripEventsElement = null;
 
-  tripEventsList = new TripListView();
+  #tripEventsList = new TripListView();
 
+  #trips = [];
   #tripItemPresenters = new Map();
 
   constructor (tripEventsElement) {
@@ -18,52 +19,59 @@ export default class TripEventsPresenter {
   }
 
   init = (trips) => {
-    if (trips.length === 0) {
-      this.renderNoTrip();
+    this.#trips = [...trips];
+
+    if (this.#trips.length === 0) {
+      this.#renderNoTrip();
     } else {
-      this.renderTripSort();
-      this.renderTripList(trips);
+      this.#renderTripSort();
+      this.#renderTripList();
     }
   }
 
-  renderTripSort = () => {
+  #renderTripSort = () => {
     render(this.#tripEventsElement, new SortView(), RenderPosition.AFTERBEGIN);
   }
 
-  renderTripList = (trips) => {
-    render(this.#tripEventsElement, this.tripEventsList, RenderPosition.BEFOREEND);
+  #renderTripList = () => {
+    render(this.#tripEventsElement, this.#tripEventsList, RenderPosition.BEFOREEND);
     for (let i = 0; i < TRIP_COUNT; i++) {
-      this.renderTripItem(trips[i]);
+      this.#renderTripItem(this.#trips[i]);
     }
   }
 
-  renderNoTrip = () => {
+  #renderNoTrip = () => {
     render(this.#tripEventsElement, new NoTripView('Everthing'), RenderPosition.BEFOREEND);
   }
 
-  renderTripItem = (trip) => {
-    const tripItemPresenter = new TripItemPresenter(this.tripEventsList, this.handleTripModeChange);
+  #renderTripItem = (trip) => {
+    const tripItemPresenter = new TripItemPresenter(this.#tripEventsList, this.#handleTripModeChange, this.#handleTripChange);
     tripItemPresenter.init(trip);
     this.#tripItemPresenters.set(trip.id, tripItemPresenter);
   }
 
-  renderAddTripItem = () => {}
+  #renderAddTripItem = () => {}
 
-  destroyTripSort = () => {}
+  #destroyTripSort = () => {}
 
-  destroyTripList = () => {}
+  #destroyTripList = () => {}
 
-  handlerTripSortChange = () => {}
+  #handlerTripSortChange = () => {}
 
-  handleTripModeChange = () => {
-    this.#tripItemPresenters.forEach((presenter) => presenter.resetView());
+  #handleTripModeChange = () => {
+    this.#tripItemPresenters.forEach((presenter) => presenter.resetTripView());
   }
 
-  escKeyDownHandler = () => {}
+  #handleTripChange = (updatedTrip) => {
+    this.#trips = updateItem(this.#trips, updatedTrip);
+    this.#tripItemPresenters.get(updatedTrip.id).init(updatedTrip);
+  }
 
-  handleAddTripSaveClick = () => {}
+  #handleEscKeyDown = () => {}
 
-  handleAddTripCancelClick = () => {}
+  #handleAddTripSaveClick = () => {}
 
-  validateUserInput = () => {}
+  #handleAddTripCancelClick = () => {}
+
+  #handleValidateUserInput = () => {}
 }
