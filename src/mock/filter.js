@@ -12,5 +12,3 @@ export const generateFilter = (trips) => Object.entries(tripToFilterMap).map(
     filteredTrips: filteredTrips(trips),
   }),
 );
-
-

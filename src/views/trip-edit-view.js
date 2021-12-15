@@ -1,10 +1,10 @@
 import AbstractView from './abstract-view.js';
-import { formatDate } from '../utils/common.js';
-import { TRIP_TYPES } from '../constants.js';
-import { OFFER_TITLE_TO_NAME } from '../constants.js';
 import { DAY_TIME_FORMAT } from '../constants.js';
 import { destinationsList } from '../mock/trip.js';
+import { formatDate } from '../utils/common.js';
 import { getKeyByValue } from '../utils/common.js';
+import { OFFER_TITLE_TO_NAME } from '../constants.js';
+import { TRIP_TYPES } from '../constants.js';
 
 const createTripEditTypeListTemplate = () =>(`
   <div class="event__type-list">

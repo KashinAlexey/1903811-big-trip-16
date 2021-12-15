@@ -1,5 +1,6 @@
 import { RenderPosition } from '../constants.js';
-import { remove, render } from '../utils/render.js';
+import { remove } from '../utils/render.js';
+import { render } from '../utils/render.js';
 import { replace } from '../utils/render.js';
 import TripView from '../views/trip-view';
 import TripEditView from '../views/trip-edit-view';

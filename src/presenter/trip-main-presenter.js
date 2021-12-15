@@ -1,9 +1,8 @@
 import { RenderPosition } from '../constants.js';
 import { render } from '../utils/render.js';
 import TripNavigationView from '../views/navigation-view.js';
-import FilterView from '../views/filter-view.js';
 import TripInfoView from '../views/trip-info-view.js';
-
+import FilterView from '../views/filter-view.js';
 export default class TripMainPresenter {
 
   #tripMainElement = null;
