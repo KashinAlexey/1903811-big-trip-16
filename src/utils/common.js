@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 
+// Working with date-time
 export const getKeyByValue = (object, value) => Object.keys(object).find((key) => object[key] === value);
 
 export const formatDate = (date, dayFormat = 'YYYY-MM-DDTHH:mm:ss.sssZ') => dayjs(date).format(dayFormat);
@@ -25,6 +26,7 @@ export const calculateDateDiff = (startDay, endDay) => {
   return timeString;
 };
 
+// Updating item in array
 export const updateItem = (items, update) => {
   const index = items.findIndex((item) => item.id === update.id);
 
@@ -39,8 +41,7 @@ export const updateItem = (items, update) => {
   ];
 };
 
-// Функция помещает значения без числа в конце списка,
-// возвращая нужный вес для колбэка sort
+// Compare functions in arr.sort()
 const getWeightForNull = (A, B) => {
   if (A === null && B === null) {
     return 0;

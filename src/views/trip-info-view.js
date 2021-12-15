@@ -1,6 +1,6 @@
 import AbstractView from './abstract-view.js';
-import { formatDate } from '../utils/common.js';
 import { DAY_FORMAT } from '../constants.js';
+import { formatDate } from '../utils/common.js';
 
 const updateTripInfoCost = (trips) => {
   let cost = 0;

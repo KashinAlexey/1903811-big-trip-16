@@ -1,9 +1,8 @@
+import { generateTrip } from '../mock/trip.js';
+import StatisticPresenter from '../presenter/statistic-presenter.js';
 import TripMainPresenter from '../presenter/trip-main-presenter.js';
 import TripEventsPresenter from '../presenter/trip-events-presenter.js';
-import StatisticPresenter from '../presenter/statistic-presenter.js';
 import { TRIP_COUNT } from '../constants.js';
-import { generateTrip } from '../mock/trip.js';
-
 export default class MainPresenter {
 
   #trips = null;

@@ -1,15 +1,15 @@
+import NoTripView from '../views/no-trip-view.js';
 import { RenderPosition } from '../constants.js';
 import { render } from '../utils/render.js';
-import NoTripView from '../views/no-trip-view.js';
 import SortView from '../views/sort-view.js';
-import TripListView from '../views/trip-list-view';
-import { TRIP_COUNT } from '../constants.js';
-import { updateItem } from '../utils/common.js';
-import TripItemPresenter from './trip-item-presenter.js';
 import { SortType } from '../constants.js';
 import { sortNumber } from '../utils/common.js';
 import { sortDate } from '../utils/common.js';
 import { sortDuration } from '../utils/common.js';
+import TripListView from '../views/trip-list-view';
+import TripItemPresenter from './trip-item-presenter.js';
+import { TRIP_COUNT } from '../constants.js';
+import { updateItem } from '../utils/common.js';
 export default class TripEventsPresenter {
   #tripEventsElement = null;
 
