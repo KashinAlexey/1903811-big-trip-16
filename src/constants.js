@@ -5,7 +5,7 @@ const RenderPosition = {
   AFTEREND: 'afterend',
 };
 
-const TRIP_COUNT = 5;
+const TRIP_COUNT = 15;
 
 const TRIP_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
@@ -21,4 +21,12 @@ const DAY_TIME_FORMAT = 'DD/MM/YY HH:mm';
 const DAY_FORMAT = 'MMM D';
 const TIME_FORMAT = 'HH:mm';
 
-export { RenderPosition, TRIP_COUNT, DAY_TIME_FORMAT, TIME_FORMAT, DAY_FORMAT, TRIP_TYPES, OFFER_TITLE_TO_NAME };
+const SortType = {
+  day: 'Day',
+  event: 'Event',
+  time: 'Time',
+  price: 'Price',
+  offer: 'Offer',
+};
+
+export { SortType, RenderPosition, TRIP_COUNT, DAY_TIME_FORMAT, TIME_FORMAT, DAY_FORMAT, TRIP_TYPES, OFFER_TITLE_TO_NAME };

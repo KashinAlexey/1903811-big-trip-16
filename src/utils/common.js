@@ -38,3 +38,42 @@ export const updateItem = (items, update) => {
     ...items.slice(index + 1),
   ];
 };
+
+// Функция помещает значения без числа в конце списка,
+// возвращая нужный вес для колбэка sort
+const getWeightForNull = (A, B) => {
+  if (A === null && B === null) {
+    return 0;
+  }
+
+  if (A === null) {
+    return 1;
+  }
+
+  if (B === null) {
+    return -1;
+  }
+
+  return null;
+};
+
+export const sortDate = (dayA, dayB, type) => {
+  const weight = getWeightForNull(dayA, dayB);
+
+  return type === 'Up'? weight ?? dayjs(dayA).diff(dayjs(dayB)) : weight ?? dayjs(dayB).diff(dayjs(dayA));
+};
+
+export const sortNumber = (numberA, numberB, type) => {
+  const weight = getWeightForNull(numberA, numberB);
+
+  return type === 'Up'? weight ?? numberB - numberA : weight ?? numberA - numberB;
+};
+
+export const sortDuration = (startA, endA, startB, endB, type) => {
+  const durationA = Math.abs(endA - startA);
+  const durationB = Math.abs(endB - startB);
+  const weight = getWeightForNull(durationA, durationB);
+
+  return type === 'Up'? weight ?? durationB - durationA : weight ?? durationA - durationB;
+};
+
