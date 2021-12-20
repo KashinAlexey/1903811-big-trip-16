@@ -1,10 +1,12 @@
-import AbstractView from './abstract-view.js';
+import { getObjectFromArray } from '../utils/common.js';
+import SmartView from './smart-view.js';
 import { DAY_TIME_FORMAT } from '../constants.js';
 import { destinationsList } from '../mock/trip.js';
 import { formatDate } from '../utils/common.js';
 import { getKeyByValue } from '../utils/common.js';
 import { OFFER_TITLE_TO_NAME } from '../constants.js';
 import { TRIP_TYPES } from '../constants.js';
+import { typeWithOffersList } from '../mock/trip.js';
 
 const createTripEditTypeListTemplate = () =>(`
   <div class="event__type-list">
@@ -29,13 +31,13 @@ const createTripEditTypeListTemplate = () =>(`
   </div>`
 );
 
-const createTripEditDestinationListTemplate = () => (`
+const createTripEditDestinationListTemplate = (destination) => (`
   <input
     class="event__input  event__input--destination"
     id="event-destination-1"
     type="text"
     name="event-destination"
-    value=""
+    value="${destination.name}"
     list="destination-list-1"
   >
 
@@ -87,6 +89,56 @@ const createTripEditDestinationTemplate = (destination) => {
   </section>`;
 };
 
+const createTripEditTimeTemplate = (dateFrom, dateTo) => (`
+  <div class="event__field-group  event__field-group--time">
+    <label
+      class="visually-hidden"
+      for="event-start-time-1">
+      From
+    </label>
+    <input
+      class="event__input  event__input--time"
+      id="event-start-time-1"
+      type="text"
+      name="event-start-time"
+      value="${formatDate(dateFrom, DAY_TIME_FORMAT)}"
+    >
+    &mdash;
+    <label
+      class="visually-hidden"
+      for="event-end-time-1">
+      To
+    </label>
+    <input
+      class="event__input  event__input--time"
+      id="event-end-time-1"
+      type="text"
+      name="event-end-time"
+      value="${formatDate(dateTo, DAY_TIME_FORMAT)}"
+    >
+  </div>`
+);
+
+const createTripEditBasePriceTemplate = (basePrice) => (`
+  <div class="event__field-group  event__field-group--price">
+    <label
+      class="event__label"
+      for="event-price-1">
+      <span class="visually-hidden">
+        Price
+      </span>
+      &euro;
+    </label>
+    <input
+      class="event__input  event__input--price"
+      id="event-price-1"
+      type="text"
+      name="event-price"
+      value="${basePrice}"
+    />
+  </div>`
+);
+
 const createTripEditTemplate = (trip) => {
   const {type, dateFrom, dateTo, destination, basePrice, offers} = trip;
 
@@ -96,7 +148,11 @@ const createTripEditTemplate = (trip) => {
 
   const typeListTemplate = createTripEditTypeListTemplate();
 
-  const destinationListTemplate = createTripEditDestinationListTemplate();
+  const destinationListTemplate = createTripEditDestinationListTemplate(destination);
+
+  const timeTemplate = createTripEditTimeTemplate(dateFrom, dateTo);
+
+  const basePriceTemplate = createTripEditBasePriceTemplate(basePrice);
 
   return `<li class="trip-events__item">
     <form
@@ -136,50 +192,9 @@ const createTripEditTemplate = (trip) => {
           ${destinationListTemplate}
         </div>
 
-        <div class="event__field-group  event__field-group--time">
-          <label
-            class="visually-hidden"
-            for="event-start-time-1">
-            From
-          </label>
-          <input
-            class="event__input  event__input--time"
-            id="event-start-time-1"
-            type="text"
-            name="event-start-time"
-            value="${formatDate(dateFrom, DAY_TIME_FORMAT)}"
-          >
-          &mdash;
-          <label
-            class="visually-hidden"
-            for="event-end-time-1">
-            To
-          </label>
-          <input
-            class="event__input  event__input--time"
-            id="event-end-time-1"
-            type="text"
-            name="event-end-time"
-            value="${formatDate(dateTo, DAY_TIME_FORMAT)}"
-          >
-        </div>
+        ${timeTemplate}
 
-        <div class="event__field-group  event__field-group--price">
-          <label
-            class="event__label"
-            for="event-price-1">
-            <span class="visually-hidden">
-              Price
-            </span>
-            &euro;
-          </label>
-          <input
-            class="event__input  event__input--price"
-            id="event-price-1"
-            type="text" name="event-price"
-            value="${basePrice}"
-          >
-        </div>
+        ${basePriceTemplate}
 
         <button
           class="event__save-btn  btn  btn--blue"
@@ -206,20 +221,32 @@ const createTripEditTemplate = (trip) => {
         ${offerTemplate}
 
         ${destinationTemplate}
+      </section>
     </form>
   </li>`;
 };
-export default class TripEditView extends AbstractView {
+export default class TripEditView extends SmartView {
   #trip = null;
 
   constructor(trip) {
     super();
-    this.#trip = trip;
+    this._data = TripEditView.parseTaskToData(trip);
+    //this.#trip = trip;
+    this.#setInnerHandlers();
   }
 
   get template() {
-    return createTripEditTemplate(this.#trip);
+    return createTripEditTemplate(this._data);
   }
+
+  static parseTaskToData = (trip) => ({...trip,
+  });
+
+  static parseDataToTask = (data) => {
+    const trip = {...data};
+
+    return trip;
+  };
 
   setFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
@@ -249,5 +276,49 @@ export default class TripEditView extends AbstractView {
   #deleteClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.deleteClick();
+  }
+
+  #setInnerHandlers = () => {
+    this.element.querySelector('.event__type-list')
+      .addEventListener('input', this.#typeListChangeHandler);
+    this.element.querySelector('.event__input--destination')
+      .addEventListener('input', this.#destinationChangeHandler);
+    this.element.querySelector('.event__available-offers')
+      .addEventListener('input', this.#offerChangeHandler);
+    this.element.querySelector('.event__input--price')
+      .addEventListener('input', this.#basePriceChangeHandler);
+  }
+
+  restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setEditClickHandler(this._callback.editClick);
+    this.setDeleteClickHandler(this._callback.deleteClick);
+  }
+
+  #typeListChangeHandler = (evt) => {
+    evt.preventDefault();
+    const {type, offers} = getObjectFromArray(typeWithOffersList, evt.target.value);
+    this.updateData({
+      type,
+      offers,
+    });
+  }
+
+  #destinationChangeHandler = (evt) => {
+    evt.preventDefault();
+    const destination = getObjectFromArray(destinationsList, evt.target.value);
+
+    if (destination) {
+      this.updateData({
+        destination : {...destination}
+      });
+    }
+  }
+
+  #offerChangeHandler = () => {
+  }
+
+  #basePriceChangeHandler = () => {
   }
 }

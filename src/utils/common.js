@@ -78,3 +78,11 @@ export const sortDuration = (startA, endA, startB, endB, type) => {
   return type === 'Up'? weight ?? durationB - durationA : weight ?? durationA - durationB;
 };
 
+export const getObjectFromArray = (arr, value) => {
+  for (let i=0; i< arr.length; i++) {
+    if (Object.values(arr[i]).includes(value)) {
+      return arr[i];
+    }
+  }
+  return null;
+};
