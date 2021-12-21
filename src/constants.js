@@ -5,7 +5,7 @@ export const RenderPosition = {
   AFTEREND: 'afterend',
 };
 
-export const TRIP_COUNT = 15;
+export const TRIP_COUNT = 5;
 
 export const TRIP_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 

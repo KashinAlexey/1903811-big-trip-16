@@ -94,8 +94,9 @@ export default class TripItemPresenter {
     this.#changeData({...this.#trip, isFavorite: !this.#trip.isFavorite});
   }
 
-  #handleFormSubmit = () => {
+  #handleFormSubmit = (trip) => {
     this.#replaceFormToTrip();
+    this.#changeData({...trip});
   }
 
   #handleDeleteClick = () => {}
