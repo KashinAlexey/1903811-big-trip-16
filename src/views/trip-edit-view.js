@@ -1,13 +1,16 @@
-import { getObjectFromArray } from '../utils/common.js';
-import SmartView from './smart-view.js';
 import { DAY_TIME_FORMAT } from '../constants.js';
 import { destinationsList } from '../mock/trip.js';
 import { formatDate } from '../utils/common.js';
+import { getObjectFromArray } from '../utils/common.js';
 import { getKeyByValue } from '../utils/common.js';
 import { OFFER_TITLE_TO_NAME } from '../constants.js';
+import SmartView from './smart-view.js';
 import { TRIP_TYPES } from '../constants.js';
 import { typeWithOffersList } from '../mock/trip.js';
 import { updateItem } from '../utils/common.js';
+
+import flatpickr from 'flatpickr';
+//import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const getCheckedOffers = (trip) => {
   const { offers } = getObjectFromArray(typeWithOffersList, trip.type);
@@ -251,17 +254,37 @@ const createTripEditTemplate = (data) => {
 };
 export default class TripEditView extends SmartView {
   #trip = null;
-  //_data = null;
+  #dateFromPicker = null;
+  #dateToPicker = null;
 
   constructor(trip) {
     super();
     this.#trip = trip;
     this._data = TripEditView.parseTaskToData(trip);
     this.#setInnerHandlers();
+    this.#setDatepicker();
   }
 
   get template() {
     return createTripEditTemplate(this._data);
+  }
+
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#dateFromPicker) {
+      this.#dateFromPicker.destroy();
+      this.#dateFromPicker = null;
+    }
+
+    if (this.#dateToPicker) {
+      this.#dateToPicker.destroy();
+      this.#dateToPicker = null;
+    }
+  }
+
+  reset = (trip) => {
+    this.updateData({...trip});
   }
 
   static parseTaskToData = (trip) => ({...trip,
@@ -304,7 +327,7 @@ export default class TripEditView extends SmartView {
 
   #deleteClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.deleteClick();
+    this._callback.deleteClick(TripEditView.parseDataToTask(this._data));
   }
 
   #setInnerHandlers = () => {
@@ -320,9 +343,43 @@ export default class TripEditView extends SmartView {
 
   restoreHandlers = () => {
     this.#setInnerHandlers();
+    this.#setDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setEditClickHandler(this._callback.editClick);
     this.setDeleteClickHandler(this._callback.deleteClick);
+  }
+
+  #setDatepicker = () => {
+    this.#dateFromPicker = flatpickr(
+      this.element.querySelector('#event-start-time-1'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._data.dateFrom,
+        onChange: this.#dateFromChangeHandler,
+      },
+    );
+    this.#dateToPicker = flatpickr(
+      this.element.querySelector('#event-end-time-1'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._data.dateTo,
+        onChange: this.#dateToChangeHandler,
+      },
+    );
+  }
+
+  #dateFromChangeHandler = ([userDate]) => {
+    this.updateData({
+      dateFrom: userDate,
+    });
+  }
+
+  #dateToChangeHandler = ([userDate]) => {
+    this.updateData({
+      dateTo: userDate,
+    });
   }
 
   #typeListChangeHandler = (evt) => {

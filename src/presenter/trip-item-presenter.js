@@ -13,6 +13,7 @@ export default class TripItemPresenter {
   #tripEventsList = null;
   #changeMode = null;
   #changeData = null;
+  #deleteItem = null;
 
   #tripComponent = null;
   #tripEditComponent = null;
@@ -20,10 +21,11 @@ export default class TripItemPresenter {
   #trip = null;
   #mode = Mode.DEFAULT;
 
-  constructor (tripEventsList, changeMode, changeData) {
+  constructor (tripEventsList, changeMode, changeData, deleteItem) {
     this.#tripEventsList = tripEventsList;
     this.#changeMode = changeMode;
     this.#changeData = changeData;
+    this.#deleteItem = deleteItem;
   }
 
   init = (trip) => {
@@ -77,6 +79,7 @@ export default class TripItemPresenter {
 
   resetTripView = () => {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#tripEditComponent.reset(this.#trip);
       this.#replaceFormToTrip();
     }
   }
@@ -86,6 +89,7 @@ export default class TripItemPresenter {
       this.#replaceTripToForm();
       document.addEventListener('keydown', this.#handleEscKeyDown);
     } else {
+      this.#tripEditComponent.reset(this.#trip);
       this.#replaceFormToTrip();
     }
   }
@@ -99,12 +103,22 @@ export default class TripItemPresenter {
     this.#changeData({...trip});
   }
 
-  #handleDeleteClick = () => {}
+  #handleDeleteClick = (trip) => {
+    this.destroy();
+    this.#deleteItem({...trip});
+  }
 
   #handleEscKeyDown = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
+      this.#tripEditComponent.reset(this.#trip);
       this.#replaceFormToTrip();
     }
   }
+
+  #handleAddTripSaveClick = () => {}
+
+  #handleAddTripCancelClick = () => {}
+
+  #handleValidateUserInput = () => {}
 }
