@@ -1,3 +1,4 @@
+import { deleteItem } from '../utils/common.js';
 import NoTripView from '../views/no-trip-view.js';
 import { RenderPosition } from '../constants.js';
 import { render } from '../utils/render.js';
@@ -55,7 +56,7 @@ export default class TripEventsPresenter {
   }
 
   #renderTripItem = (trip) => {
-    const tripItemPresenter = new TripItemPresenter(this.#tripEventsList, this.#handleTripModeChange, this.#handleTripChange);
+    const tripItemPresenter = new TripItemPresenter(this.#tripEventsList, this.#handleTripModeChange, this.#handleTripChange, this.#handleTripDelete);
     tripItemPresenter.init(trip);
     this.#tripItemPresenters.set(trip.id, tripItemPresenter);
   }
@@ -104,11 +105,12 @@ export default class TripEventsPresenter {
     this.#tripItemPresenters.get(updatedTrip.id).init(updatedTrip);
   }
 
-  #handleEscKeyDown = () => {}
-
-  #handleAddTripSaveClick = () => {}
-
-  #handleAddTripCancelClick = () => {}
-
-  #handleValidateUserInput = () => {}
+  #handleTripDelete = (deletedTrip) => {
+    this.#trips = deleteItem(this.#trips, deletedTrip);
+    this.#sourcedTrips = deleteItem(this.#sourcedTrips, deletedTrip);
+    if (this.#trips.length === 0) {
+      this.#trips = [];
+      this.init(this.#trips);
+    }
+  }
 }

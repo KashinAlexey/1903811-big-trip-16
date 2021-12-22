@@ -1,10 +1,10 @@
-import { getObjectFromArray } from '../utils/common.js';
-import SmartView from './smart-view.js';
 import { DAY_TIME_FORMAT } from '../constants.js';
 import { destinationsList } from '../mock/trip.js';
 import { formatDate } from '../utils/common.js';
+import { getObjectFromArray } from '../utils/common.js';
 import { getKeyByValue } from '../utils/common.js';
 import { OFFER_TITLE_TO_NAME } from '../constants.js';
+import SmartView from './smart-view.js';
 import { TRIP_TYPES } from '../constants.js';
 import { typeWithOffersList } from '../mock/trip.js';
 import { updateItem } from '../utils/common.js';
@@ -327,7 +327,7 @@ export default class TripEditView extends SmartView {
 
   #deleteClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.deleteClick();
+    this._callback.deleteClick(TripEditView.parseDataToTask(this._data));
   }
 
   #setInnerHandlers = () => {
