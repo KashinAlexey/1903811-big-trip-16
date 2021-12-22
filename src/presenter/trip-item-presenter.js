@@ -77,6 +77,7 @@ export default class TripItemPresenter {
 
   resetTripView = () => {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#tripEditComponent.reset(this.#trip);
       this.#replaceFormToTrip();
     }
   }
@@ -86,6 +87,7 @@ export default class TripItemPresenter {
       this.#replaceTripToForm();
       document.addEventListener('keydown', this.#handleEscKeyDown);
     } else {
+      this.#tripEditComponent.reset(this.#trip);
       this.#replaceFormToTrip();
     }
   }
@@ -104,6 +106,7 @@ export default class TripItemPresenter {
   #handleEscKeyDown = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
+      this.#tripEditComponent.reset(this.#trip);
       this.#replaceFormToTrip();
     }
   }

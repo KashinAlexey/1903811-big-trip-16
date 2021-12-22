@@ -283,6 +283,10 @@ export default class TripEditView extends SmartView {
     }
   }
 
+  reset = (trip) => {
+    this.updateData({...trip});
+  }
+
   static parseTaskToData = (trip) => ({...trip,
     offers: getCheckedOffers(trip)}
   );
