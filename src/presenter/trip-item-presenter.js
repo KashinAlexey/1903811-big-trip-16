@@ -39,7 +39,7 @@ export default class TripItemPresenter {
     this.#tripComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
     this.#tripEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#tripEditComponent.setEditClickHandler(this.#handleEditClick);
-    this.#tripEditComponent.setDeleteClickHandler(this.handleDeleteClick);
+    this.#tripEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
 
     if (previousTripComponent === null || previousTripEditComponent === null) {
       render(this.#tripEventsList, this.#tripComponent.element, RenderPosition.BEFOREEND);
@@ -94,8 +94,9 @@ export default class TripItemPresenter {
     this.#changeData({...this.#trip, isFavorite: !this.#trip.isFavorite});
   }
 
-  #handleFormSubmit = () => {
+  #handleFormSubmit = (trip) => {
     this.#replaceFormToTrip();
+    this.#changeData({...trip});
   }
 
   #handleDeleteClick = () => {}

@@ -1,5 +1,6 @@
 import { generateRandomInteger, generateBoolean, generateText, generateWord, generateDate, generatePictureSrc, generateRndSizeArray, getSing, generateId, getRndArrayElement, generateFixSizeArray, getRndSizeArray } from './util-mock.js';
 import { TRIP_TYPES } from '../constants.js';
+import { getObjectFromArray } from '../utils/common.js';
 
 // Данные
 const MAX_DESTINATION_COUNT = 20;
@@ -25,6 +26,11 @@ export const generateTypeWithOffers = (type) => (
   }
 );
 
+const generateChosenOffers = (list, type) => {
+  const { offers } = getObjectFromArray(list, type);
+  return getRndSizeArray(offers);
+};
+
 export const generateDestination = () => {
   const name =  generateWord(5, 10);
 
@@ -45,7 +51,6 @@ export const destinationsList = generateFixSizeArray(MAX_DESTINATION_COUNT, gene
 export const typeWithOffersList = TRIP_TYPES.map((type) => generateTypeWithOffers(type));
 
 export const generateTrip = () => {
-  const offers = getRndSizeArray(offersList);
   const basePrice = generateRandomInteger(0, MAX_BASE_PRICE); // base_price
   const dateFrom = generateDate(getSing()*7, getSing()*12); // date_from '2021-11-25T12:29:07.572Z'
   const dateTo = generateDate(getSing()*7, getSing()*12); //date_to  '2021-11-26T01:30:58.160Z'
@@ -53,6 +58,7 @@ export const generateTrip = () => {
   const id = generateId(3); // ?
   const isFavorite = generateBoolean(); // is_favorite
   const type = TRIP_TYPES[generateRandomInteger(0, TRIP_TYPES.length - 1)];
+  const offers = generateChosenOffers(typeWithOffersList, type);
 
   return {
     id,
