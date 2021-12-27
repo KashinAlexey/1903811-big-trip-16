@@ -31,9 +31,7 @@ export default class MainPresenter {
 
   // renderTripMain = () => {}
 
-  // #renderTripEvents = () => {
-
-  // }
+  // #renderTripEvents = () => {}
 
   // renderStatistic= () => {}
 
