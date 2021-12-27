@@ -13,6 +13,7 @@ import { TRIP_COUNT } from '../constants.js';
 import { updateItem } from '../utils/common.js';
 export default class TripEventsPresenter {
   #tripEventsElement = null;
+  #tripsModel = null;
 
   #tripEventsList = new TripListView();
   #sortComponent = new SortView();
@@ -21,15 +22,19 @@ export default class TripEventsPresenter {
   #tripItemPresenters = new Map();
 
   #currentSortType = SortType.day;
-  #sourcedTrips = [];
 
-  constructor (tripEventsElement) {
+  constructor (tripsModel, tripEventsElement) {
+    this.#tripsModel = tripsModel;
     this.#tripEventsElement = tripEventsElement;
   }
 
-  init = (trips) => {
-    this.#trips = [...trips];
-    this.#sourcedTrips = [...trips];
+  get trips(){
+    const trips = this.#tripsModel.data;
+    return trips;
+  }
+
+  init = () => {
+    this.#trips = [...this.trips];
 
     if (this.#trips.length === 0) {
       this.#renderNoTrip();
@@ -101,13 +106,11 @@ export default class TripEventsPresenter {
 
   #handleTripChange = (updatedTrip) => {
     this.#trips = updateItem(this.#trips, updatedTrip);
-    this.#sourcedTrips = updateItem(this.#sourcedTrips, updatedTrip);
     this.#tripItemPresenters.get(updatedTrip.id).init(updatedTrip);
   }
 
   #handleTripDelete = (deletedTrip) => {
     this.#trips = deleteItem(this.#trips, deletedTrip);
-    this.#sourcedTrips = deleteItem(this.#sourcedTrips, deletedTrip);
     if (this.#trips.length === 0) {
       this.#trips = [];
       this.init(this.#trips);

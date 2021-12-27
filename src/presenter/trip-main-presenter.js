@@ -4,21 +4,30 @@ import TripNavigationView from '../views/navigation-view.js';
 import TripInfoView from '../views/trip-info-view.js';
 import FilterView from '../views/filter-view.js';
 export default class TripMainPresenter {
+  #trips = [];
+  #tripsModel = null;
 
   #tripMainElement = null;
   #tripNavigationElement = null;
   #tripFiltersElement = null;
 
-  constructor(tripMainElement, tripNavigationElement, tripFiltersElement) {
+  constructor(tripsModel, tripMainElement, tripNavigationElement, tripFiltersElement) {
+    this.#tripsModel = tripsModel;
     this.#tripMainElement = tripMainElement;
     this.#tripNavigationElement = tripNavigationElement;
     this.#tripFiltersElement = tripFiltersElement;
   }
 
-  init = (trips) => {
+  get trips(){
+    const trips = this.#tripsModel.data;
+    return trips;
+  }
+
+  init = () => {
+    this.#trips = [...this.trips];
     this.renderTripControls();
-    if (trips.length !== 0) {
-      this.renderTripInfo(trips);
+    if (this.#trips.length !== 0) {
+      this.renderTripInfo(this.#trips);
     }
   }
 
