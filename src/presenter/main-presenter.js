@@ -3,6 +3,7 @@ import TripMainPresenter from '../presenter/trip-main-presenter.js';
 import TripEventsPresenter from '../presenter/trip-events-presenter.js';
 export default class MainPresenter {
   #tripsModel = null;
+  #filterModel = null;
 
   #siteHeaderElement = document.querySelector('.page-header');
   #siteMainElement = document.querySelector('.page-main');
@@ -15,11 +16,12 @@ export default class MainPresenter {
   tripEventsPresenter = null;
   statisticPresenter = null;
 
-  constructor(dataModel){
+  constructor(dataModel, filterModel){
     this.#tripsModel = dataModel;
+    this.#filterModel = filterModel;
 
-    this.tripMainPresenter = new TripMainPresenter(this.#tripsModel, this.#tripMainElement, this.#tripNavigationElement, this.#tripFiltersElement);
-    this.tripEventsPresenter = new TripEventsPresenter(this.#tripsModel, this.#tripEventsElement);
+    this.tripMainPresenter = new TripMainPresenter(this.#tripsModel, this.#filterModel, this.#tripMainElement, this.#tripNavigationElement, this.#tripFiltersElement);
+    this.tripEventsPresenter = new TripEventsPresenter(this.#tripsModel, this.#filterModel, this.#tripEventsElement);
     this.statisticPresenter = new StatisticPresenter();
   }
 

@@ -10,9 +10,12 @@ import TripListView from '../views/trip-list-view';
 import TripItemPresenter from './trip-item-presenter.js';
 import { UserAction } from '../constants.js';
 import { UpdateType } from '../constants.js';
+import { filter } from '../utils/filter.js';
+import { FilterType } from '../constants.js';
 export default class TripEventsPresenter {
   #tripEventsElement = null;
   #tripsModel = null;
+  #filterModel = null;
 
   #tripEventsListComponent = null;
   #sortComponent = null;
@@ -21,14 +24,18 @@ export default class TripEventsPresenter {
   #tripItemPresenters = new Map();
 
   #currentSortType = SortType.day;
+  #filterType = FilterType.EVERYTHING;
 
-  constructor (tripsModel, tripEventsElement) {
+  constructor (tripsModel, filterModel, tripEventsElement) {
     this.#tripsModel = tripsModel;
+    this.#filterModel = filterModel;
     this.#tripEventsElement = tripEventsElement;
   }
 
   get trips(){
+    this.#filterType = this.#filterModel.filter;
     const trips = this.#tripsModel.data;
+    const filteredTrips = filter[this.#filterType](trips);
 
     switch (this.#currentSortType) {
       case SortType.price:
@@ -41,11 +48,12 @@ export default class TripEventsPresenter {
         trips.sort((tripA, tripB) => sortDate(tripA.dateFrom, tripB.dateFrom, 'Up'));
     }
 
-    return trips;
+    return filteredTrips;
   }
 
   init = () => {
     this.#tripsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
 
     this.#renderTripEvents();
   }
@@ -66,13 +74,17 @@ export default class TripEventsPresenter {
     this.#renderTripList(trips);
   }
 
-  #clearTripEvents = () => {
+  #clearTripEvents = ({resetSortType = false} = {}) => {
     this.#clearTripList();
 
     remove(this.#sortComponent);
 
     if (this.#noTripComponent) {
       remove(this.#noTripComponent);
+    }
+
+    if (resetSortType) {
+      this.#currentSortType = SortType.day;
     }
   }
 
@@ -144,8 +156,7 @@ export default class TripEventsPresenter {
         this.#renderTripEvents();
         break;
       case UpdateType.MAJOR:
-        // - обновить всe (при переключении фильтра)
-        this.#clearTripEvents();
+        this.#clearTripEvents({resetSortType: true});
         this.#renderTripEvents();
         break;
     }

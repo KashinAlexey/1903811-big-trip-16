@@ -2,17 +2,18 @@ import { RenderPosition } from '../constants.js';
 import { render } from '../utils/render.js';
 import TripNavigationView from '../views/navigation-view.js';
 import TripInfoView from '../views/trip-info-view.js';
-import FilterView from '../views/filter-view.js';
+import FilterPresenter from './filter-presenter.js';
 export default class TripMainPresenter {
   #trips = [];
   #tripsModel = null;
-
+  #filterModel = null;
   #tripMainElement = null;
   #tripNavigationElement = null;
   #tripFiltersElement = null;
 
-  constructor(tripsModel, tripMainElement, tripNavigationElement, tripFiltersElement) {
+  constructor(tripsModel, filterModel, tripMainElement, tripNavigationElement, tripFiltersElement) {
     this.#tripsModel = tripsModel;
+    this.#filterModel = filterModel;
     this.#tripMainElement = tripMainElement;
     this.#tripNavigationElement = tripNavigationElement;
     this.#tripFiltersElement = tripFiltersElement;
@@ -47,20 +48,7 @@ export default class TripMainPresenter {
   }
 
   renderFilters = () => {
-    render(this.#tripFiltersElement, new FilterView(), RenderPosition.BEFOREEND);
+    const filterPresenter = new FilterPresenter(this.#tripFiltersElement, this.#filterModel, this.#tripsModel);
+    filterPresenter.init();
   }
-
-  destroyFilters = () => {}
-
-  handleEventAddBtnClick = () => {}
-
-  handleNavigationChange = () => {}
-
-  handleFilterChange = () => {}
-
-  updateTripInfoTitle = () => {}
-
-  updateTripInfoDates = () => {}
-
-  updateTripInfoCost = () => {}
 }
