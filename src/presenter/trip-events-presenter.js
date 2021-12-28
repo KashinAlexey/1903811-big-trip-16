@@ -98,7 +98,7 @@ export default class TripEventsPresenter {
   }
 
   #renderNoTrip = () => {
-    this.#noTripComponent = new NoTripView('Everthing');
+    this.#noTripComponent = new NoTripView(this.#filterType);
     render(this.#tripEventsElement, this.#noTripComponent, RenderPosition.BEFOREEND);
   }
 
