@@ -124,10 +124,4 @@ export default class TripItemPresenter {
       this.#replaceFormToTrip();
     }
   }
-
-  // #handleAddTripSaveClick = () => {}
-
-  // #handleAddTripCancelClick = () => {}
-
-  // #handleValidateUserInput = () => {}
 }

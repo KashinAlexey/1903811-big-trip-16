@@ -11,6 +11,7 @@ export default class MainPresenter {
   #tripNavigationElement = this.#tripMainElement.querySelector('.trip-controls__navigation');
   #tripFiltersElement = this.#tripMainElement.querySelector('.trip-controls__filters');
   #tripEventsElement = this.#siteMainElement.querySelector('.trip-events');
+  #tripEventAddBtn = this.#tripMainElement.querySelector('.trip-main__event-add-btn');
 
   tripMainPresenter = null;
   tripEventsPresenter = null;
@@ -29,6 +30,11 @@ export default class MainPresenter {
     this.tripMainPresenter.init();
     this.tripEventsPresenter.init();
     this.statisticPresenter.init();
+
+    this.#tripEventAddBtn.addEventListener('click', (evt) => {
+      evt.preventDefault();
+      this.tripEventsPresenter.createTrip();
+    });
   }
 
   // renderTripMain = () => {}

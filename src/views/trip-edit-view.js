@@ -1,16 +1,14 @@
 import { DAY_TIME_FORMAT } from '../constants.js';
 import { destinationsList } from '../mock/trip.js';
 import { formatDate } from '../utils/common.js';
+import flatpickr from 'flatpickr';
 import { getObjectFromArray } from '../utils/common.js';
 import { getKeyByValue } from '../utils/common.js';
 import { OFFER_TITLE_TO_NAME } from '../constants.js';
 import SmartView from './smart-view.js';
 import { TRIP_TYPES } from '../constants.js';
 import { typeWithOffersList } from '../mock/trip.js';
-import { updateItem } from '../utils/common.js';
-
-import flatpickr from 'flatpickr';
-//import '../../node_modules/flatpickr/dist/flatpickr.min.css';
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const getCheckedOffers = (trip) => {
   const { offers } = getObjectFromArray(typeWithOffersList, trip.type);
@@ -253,13 +251,11 @@ const createTripEditTemplate = (data) => {
   </li>`;
 };
 export default class TripEditView extends SmartView {
-  #trip = null;
   #dateFromPicker = null;
   #dateToPicker = null;
 
   constructor(trip) {
     super();
-    this.#trip = trip;
     this._data = TripEditView.parseTaskToData(trip);
     this.#setInnerHandlers();
     this.#setDatepicker();
@@ -406,8 +402,9 @@ export default class TripEditView extends SmartView {
     evt.preventDefault();
     const updatedOffer = getObjectFromArray(this._data.offers, evt.target.dataset.eventOfferId);
     updatedOffer.isChecked = !updatedOffer.isChecked;
+    const offers = new Set([...this._data.offers, updatedOffer]);
     this.updateData({
-      offers : updateItem(this._data.offers, updatedOffer),
+      offers: [...offers],
     });
   }
 

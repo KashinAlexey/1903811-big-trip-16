@@ -8,6 +8,7 @@ import { sortDate } from '../utils/common.js';
 import { sortDuration } from '../utils/common.js';
 import TripListView from '../views/trip-list-view';
 import TripItemPresenter from './trip-item-presenter.js';
+import TripItemAddPresenter from './trip-item-add-presenter.js';
 import { UserAction } from '../constants.js';
 import { UpdateType } from '../constants.js';
 import { filter } from '../utils/filter.js';
@@ -22,6 +23,7 @@ export default class TripEventsPresenter {
   #noTripComponent = null;
 
   #tripItemPresenters = new Map();
+  #tripNewPresenter = null;
 
   #currentSortType = SortType.day;
   #filterType = FilterType.EVERYTHING;
@@ -30,6 +32,8 @@ export default class TripEventsPresenter {
     this.#tripsModel = tripsModel;
     this.#filterModel = filterModel;
     this.#tripEventsElement = tripEventsElement;
+
+    this.#tripNewPresenter = new TripItemAddPresenter(this.#tripEventsElement, this.#handleViewAction);
   }
 
   get trips(){
@@ -58,6 +62,11 @@ export default class TripEventsPresenter {
     this.#renderTripEvents();
   }
 
+  createTrip = (callback) => {
+    this.#currentSortType = SortType.day;
+    this.#tripNewPresenter.init(callback);
+  }
+
   #renderTripEvents = () => {
     const trips = this.trips;
     const tripCount = trips.length;
@@ -75,6 +84,7 @@ export default class TripEventsPresenter {
   }
 
   #clearTripEvents = ({resetSortType = false} = {}) => {
+    this.#tripNewPresenter.destroy();
     this.#clearTripList();
 
     remove(this.#sortComponent);
@@ -108,10 +118,6 @@ export default class TripEventsPresenter {
     this.#tripItemPresenters.set(trip.id, tripItemPresenter);
   }
 
-  #renderAddTripItem = () => {}
-
-  #destroyTripSort = () => {}
-
   #renderTripSort = () => {
     this.#sortComponent = new SortView(this.#currentSortType);
     this.#sortComponent.setSortTypeChangeHandler(this.#handlerTripSortChange);
@@ -129,6 +135,7 @@ export default class TripEventsPresenter {
   }
 
   #handleTripModeChange = () => {
+    this.#tripNewPresenter.destroy();
     this.#tripItemPresenters.forEach((presenter) => presenter.resetTripView());
   }
 
