@@ -8,7 +8,32 @@ import { OFFER_TITLE_TO_NAME } from '../constants.js';
 import SmartView from './smart-view.js';
 import { TRIP_TYPES } from '../constants.js';
 import { typeWithOffersList } from '../mock/trip.js';
+import he from 'he';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
+
+const getCheckedOffers = (trip, isNewTrip) => {
+  const { offers } = getObjectFromArray(typeWithOffersList, trip.type);
+
+  const checkedOffer = [];
+
+  for (let i = 0; i < offers.length; i++) {
+    const obj = Object.assign({},offers[i]);
+    obj.isChecked = false;
+    checkedOffer.push(obj);
+  }
+
+  if (!isNewTrip) {
+    for (let i = 0; i < checkedOffer.length; i++) {
+      for (let j = 0; j < trip.offers.length; j++) {
+        if (checkedOffer[i].id === trip.offers[j].id) {
+          checkedOffer[i].isChecked = true;
+        }
+      }
+    }
+  }
+
+  return checkedOffer;
+};
 
 const emptyTrip = () => {
   const {type, offers} = getObjectFromArray(typeWithOffersList, TRIP_TYPES[0]);
@@ -55,7 +80,7 @@ const createTripEditDestinationListTemplate = (destination) => (`
     id="event-destination-1"
     type="text"
     name="event-destination"
-    value="${destination.name}"
+    value="${he.encode(destination.name)}"
     list="destination-list-1"
   >
 
@@ -161,7 +186,8 @@ const createTripEditBasePriceTemplate = (basePrice) => (`
     <input
       class="event__input  event__input--price"
       id="event-price-1"
-      type="text"
+      type="number"
+      min = 0
       name="event-price"
       value="${basePrice}"
     />
@@ -182,6 +208,8 @@ const createTripEditTemplate = (data) => {
   const timeTemplate = createTripEditTimeTemplate(dateFrom, dateTo);
 
   const basePriceTemplate = createTripEditBasePriceTemplate(basePrice);
+
+  const isSubmitDisabled = (dateFrom > dateTo);
 
   return `<li class="trip-events__item">
     <form
@@ -228,7 +256,8 @@ const createTripEditTemplate = (data) => {
 
         <button
           class="event__save-btn  btn  btn--blue"
-          type="submit">
+          type="submit"
+          ${isSubmitDisabled ? 'disabled' : ''}>
           Save
         </button>
 
@@ -255,7 +284,7 @@ export default class TripAddView extends SmartView {
 
   constructor() {
     super();
-    this._data = emptyTrip();
+    this._data = TripAddView.parseTaskToData(emptyTrip());
     this.#setInnerHandlers();
     this.#setDatepicker();
   }
@@ -263,6 +292,19 @@ export default class TripAddView extends SmartView {
   get template() {
     return createTripEditTemplate(this._data);
   }
+
+  static parseTaskToData = (trip) => ({...trip,
+    offers: getCheckedOffers(trip, true)}
+  );
+
+  static parseDataToTask = (data) => {
+    const offers = data.offers.filter((offer) => offer.isChecked);
+    offers.forEach((offer) => delete offer.isChecked);
+
+    const trip = {...data, offers};
+
+    return trip;
+  };
 
   removeElement = () => {
     super.removeElement();
@@ -285,7 +327,7 @@ export default class TripAddView extends SmartView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit(this._data);
+    this._callback.formSubmit(TripAddView.parseDataToTask(this._data));
   }
 
   setDeleteClickHandler = (callback) => {
@@ -295,7 +337,7 @@ export default class TripAddView extends SmartView {
 
   #deleteClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.deleteClick(this._data);
+    this._callback.deleteClick(TripAddView.parseDataToTask(this._data));
   }
 
   #setInnerHandlers = () => {
@@ -361,11 +403,15 @@ export default class TripAddView extends SmartView {
   #destinationChangeHandler = (evt) => {
     evt.preventDefault();
     const destination = getObjectFromArray(destinationsList, evt.target.value);
+    const destinationInputElement = this.element.querySelector('.event__input--destination');
 
     if (destination) {
+      destinationInputElement.setCustomValidity('');
       this.updateData({
         destination : {...destination}
       });
+    } else {
+      destinationInputElement.setCustomValidity('Choose name from list');
     }
   }
 
@@ -382,7 +428,7 @@ export default class TripAddView extends SmartView {
   #basePriceChangeHandler = (evt) => {
     evt.preventDefault();
     this.updateData({
-      basePrice: evt.target.value,
+      basePrice: +evt.target.value,
     }, true);
   };
 }

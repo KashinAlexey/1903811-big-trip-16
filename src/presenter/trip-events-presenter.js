@@ -18,7 +18,7 @@ export default class TripEventsPresenter {
   #tripsModel = null;
   #filterModel = null;
 
-  #tripEventsListComponent = null;
+  #tripEventsListComponent = new TripListView();
   #sortComponent = null;
   #noTripComponent = null;
 
@@ -33,7 +33,7 @@ export default class TripEventsPresenter {
     this.#filterModel = filterModel;
     this.#tripEventsElement = tripEventsElement;
 
-    this.#tripNewPresenter = new TripItemAddPresenter(this.#tripEventsElement, this.#handleViewAction);
+    this.#tripNewPresenter = new TripItemAddPresenter(this.#tripEventsListComponent, this.#handleViewAction);
   }
 
   get trips(){
@@ -62,17 +62,25 @@ export default class TripEventsPresenter {
     this.#renderTripEvents();
   }
 
+  destroy = () => {
+    this.#clearTripEvents = ({resetSortType: false});
+
+    remove(this.#tripEventsElement);
+    remove(this.#tripEventsListComponent);
+
+    this.#tripsModel.removeObserver(this.#handleModelEvent);
+    this.#filterModel.removeObserver(this.#handleModelEvent);
+  }
+
   createTrip = (callback) => {
-    this.#currentSortType = SortType.day;
+    this.#filterType = FilterType.EVERYTHING;
+    this.#filterModel.setFilter(UpdateType.MAJOR, this.#filterType);
     this.#tripNewPresenter.init(callback);
   }
 
   #renderTripEvents = () => {
     const trips = this.trips;
     const tripCount = trips.length;
-    this.#tripEventsListComponent = new TripListView();
-
-    render(this.#tripEventsElement, this.#tripEventsListComponent, RenderPosition.BEFOREEND);
 
     if (tripCount === 0) {
       this.#renderNoTrip();
@@ -88,6 +96,7 @@ export default class TripEventsPresenter {
     this.#clearTripList();
 
     remove(this.#sortComponent);
+    remove(this.#tripEventsListComponent);
 
     if (this.#noTripComponent) {
       remove(this.#noTripComponent);
@@ -98,7 +107,14 @@ export default class TripEventsPresenter {
     }
   }
 
+  #renderTripSort = () => {
+    this.#sortComponent = new SortView(this.#currentSortType);
+    this.#sortComponent.setSortTypeChangeHandler(this.#handlerTripSortChange);
+    render(this.#tripEventsElement, this.#sortComponent, RenderPosition.AFTERBEGIN);
+  }
+
   #renderTripList = (trips) => {
+    render(this.#tripEventsElement, this.#tripEventsListComponent, RenderPosition.BEFOREEND);
     trips.forEach((trip) => this.#renderTripItem(trip));
   }
 
@@ -116,12 +132,6 @@ export default class TripEventsPresenter {
     const tripItemPresenter = new TripItemPresenter(this.#tripEventsListComponent, this.#handleTripModeChange, this.#handleViewAction);
     tripItemPresenter.init(trip);
     this.#tripItemPresenters.set(trip.id, tripItemPresenter);
-  }
-
-  #renderTripSort = () => {
-    this.#sortComponent = new SortView(this.#currentSortType);
-    this.#sortComponent.setSortTypeChangeHandler(this.#handlerTripSortChange);
-    render(this.#tripEventsElement, this.#sortComponent, RenderPosition.AFTERBEGIN);
   }
 
   #handlerTripSortChange = (sortType) => {

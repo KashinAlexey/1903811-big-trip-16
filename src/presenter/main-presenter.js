@@ -36,14 +36,4 @@ export default class MainPresenter {
       this.tripEventsPresenter.createTrip();
     });
   }
-
-  // renderTripMain = () => {}
-
-  // #renderTripEvents = () => {}
-
-  // renderStatistic= () => {}
-
-  // destroyTripEvents = () => {}
-
-  // destroyStatistic = () => {}
 }

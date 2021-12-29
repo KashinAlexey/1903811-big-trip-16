@@ -30,7 +30,6 @@ export default class TripItemAddPresenter {
     this.#tripAddComponent.setDeleteClickHandler(this.#handleDeleteClick);
 
     render(this.#tripEventsList, this.#tripAddComponent.element, RenderPosition.AFTERBEGIN);
-
     document.addEventListener('keydown', this.#handleEscKeyDown);
   }
 
@@ -42,6 +41,8 @@ export default class TripItemAddPresenter {
     this.#destroyCallback?.();
 
     remove(this.#tripAddComponent);
+    this.#tripAddComponent = null;
+
     document.removeEventListener('keydown', this.#handleEscKeyDown);
   }
 

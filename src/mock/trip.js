@@ -52,8 +52,9 @@ export const typeWithOffersList = TRIP_TYPES.map((type) => generateTypeWithOffer
 
 export const generateTrip = () => {
   const basePrice = generateRandomInteger(0, MAX_BASE_PRICE); // base_price
-  const dateFrom = generateDate(getSing()*7, getSing()*12); // date_from '2021-11-25T12:29:07.572Z'
-  const dateTo = generateDate(getSing()*7, getSing()*12); //date_to  '2021-11-26T01:30:58.160Z'
+  let dateFrom = generateDate(getSing()*7, getSing()*12); // date_from '2021-11-25T12:29:07.572Z'
+  let dateTo = generateDate(getSing()*7, getSing()*12); //date_to  '2021-11-26T01:30:58.160Z'
+  if (dateFrom > dateTo) {[dateFrom, dateTo] = [dateTo, dateFrom];}
   const destination = getRndArrayElement(destinationsList);
   const id = generateId(3); // ?
   const isFavorite = generateBoolean(); // is_favorite
