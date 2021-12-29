@@ -1,33 +1,31 @@
 import AbstractView from './abstract-view.js';
+import { FilterType } from '../constants.js';
 
-const createNoTripTemplate = (filter) => {
-  let noTripText = null;
+const NoTripsTextType = {
+  [FilterType.EVERYTHING]: 'Click New Event to create your first point',
+  [FilterType.FUTURE]: 'There are no future events now',
+  [FilterType.PAST]: 'There are no past events now',
+  DEFAULT: 'Loading...',
+};
 
-  switch (filter) {
-    case 'Everthing':
-      noTripText =  'Click New Event to create your first point';
-      break;
-    case 'Past':
-      noTripText =  'There are no past events now';
-      break;
-    case 'Future':
-      noTripText =  'There are no future events now';
-      break;
-    default:
-      noTripText = 'Loading...';
-  }
+const createNoTripTemplate = (filterType) => {
+  const noTripTextValue = NoTripsTextType[filterType];
 
-  return `<p class="trip-events__msg">${noTripText}</p>`;
+  return (
+    `<p class="trip-events__msg">
+      ${noTripTextValue}
+    </p>`
+  );
 };
 export default class NoTripView extends AbstractView {
-  #filter = null;
+  #filterType = null;
 
-  constructor(filter) {
+  constructor(filterType) {
     super();
-    this.#filter = filter;
+    this.#filterType = filterType;
   }
 
   get template() {
-    return createNoTripTemplate(this.#filter);
+    return createNoTripTemplate(this.#filterType);
   }
 }

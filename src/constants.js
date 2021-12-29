@@ -28,3 +28,21 @@ export const SortType = {
   price: 'Price',
   offer: 'Offer',
 };
+
+export const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PAST: 'past',
+};
+
+export const UserAction = {
+  UPDATE_DATA: 'UPDATE_DATA',
+  ADD_DATA: 'ADD_DATA',
+  DELETE_DATA: 'DELETE_DATA',
+};
+
+export const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};

@@ -1,18 +1,17 @@
 import { DAY_TIME_FORMAT } from '../constants.js';
 import { destinationsList } from '../mock/trip.js';
 import { formatDate } from '../utils/common.js';
+import flatpickr from 'flatpickr';
 import { getObjectFromArray } from '../utils/common.js';
 import { getKeyByValue } from '../utils/common.js';
 import { OFFER_TITLE_TO_NAME } from '../constants.js';
 import SmartView from './smart-view.js';
 import { TRIP_TYPES } from '../constants.js';
 import { typeWithOffersList } from '../mock/trip.js';
-import { updateItem } from '../utils/common.js';
+import he from 'he';
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
-import flatpickr from 'flatpickr';
-//import '../../node_modules/flatpickr/dist/flatpickr.min.css';
-
-const getCheckedOffers = (trip) => {
+const getCheckedOffers = (trip, isNewTrip) => {
   const { offers } = getObjectFromArray(typeWithOffersList, trip.type);
 
   const checkedOffer = [];
@@ -23,10 +22,12 @@ const getCheckedOffers = (trip) => {
     checkedOffer.push(obj);
   }
 
-  for (let i = 0; i < checkedOffer.length; i++) {
-    for (let j = 0; j < trip.offers.length; j++) {
-      if (checkedOffer[i].id === trip.offers[j].id) {
-        checkedOffer[i].isChecked = true;
+  if (!isNewTrip) {
+    for (let i = 0; i < checkedOffer.length; i++) {
+      for (let j = 0; j < trip.offers.length; j++) {
+        if (checkedOffer[i].id === trip.offers[j].id) {
+          checkedOffer[i].isChecked = true;
+        }
       }
     }
   }
@@ -63,7 +64,7 @@ const createTripEditDestinationListTemplate = (destination) => (`
     id="event-destination-1"
     type="text"
     name="event-destination"
-    value="${destination.name}"
+    value="${he.encode(destination.name)}"
     list="destination-list-1"
   >
 
@@ -159,7 +160,8 @@ const createTripEditBasePriceTemplate = (basePrice) => (`
     <input
       class="event__input  event__input--price"
       id="event-price-1"
-      type="text"
+      type="number"
+      min = 0
       name="event-price"
       value="${basePrice}"
     />
@@ -180,6 +182,8 @@ const createTripEditTemplate = (data) => {
   const timeTemplate = createTripEditTimeTemplate(dateFrom, dateTo);
 
   const basePriceTemplate = createTripEditBasePriceTemplate(basePrice);
+
+  const isSubmitDisabled = (dateFrom > dateTo);
 
   return `<li class="trip-events__item">
     <form
@@ -225,7 +229,8 @@ const createTripEditTemplate = (data) => {
 
         <button
           class="event__save-btn  btn  btn--blue"
-          type="submit">
+          type="submit"
+          ${isSubmitDisabled ? 'disabled' : ''}>
           Save
         </button>
 
@@ -253,13 +258,11 @@ const createTripEditTemplate = (data) => {
   </li>`;
 };
 export default class TripEditView extends SmartView {
-  #trip = null;
   #dateFromPicker = null;
   #dateToPicker = null;
 
   constructor(trip) {
     super();
-    this.#trip = trip;
     this._data = TripEditView.parseTaskToData(trip);
     this.#setInnerHandlers();
     this.#setDatepicker();
@@ -288,7 +291,7 @@ export default class TripEditView extends SmartView {
   }
 
   static parseTaskToData = (trip) => ({...trip,
-    offers: getCheckedOffers(trip)}
+    offers: getCheckedOffers(trip, false)}
   );
 
   static parseDataToTask = (data) => {
@@ -394,11 +397,15 @@ export default class TripEditView extends SmartView {
   #destinationChangeHandler = (evt) => {
     evt.preventDefault();
     const destination = getObjectFromArray(destinationsList, evt.target.value);
+    const destinationInputElement = this.element.querySelector('.event__input--destination');
 
     if (destination) {
+      destinationInputElement.setCustomValidity('');
       this.updateData({
         destination : {...destination}
       });
+    } else {
+      destinationInputElement.setCustomValidity('Choose name from list');
     }
   }
 
@@ -406,15 +413,16 @@ export default class TripEditView extends SmartView {
     evt.preventDefault();
     const updatedOffer = getObjectFromArray(this._data.offers, evt.target.dataset.eventOfferId);
     updatedOffer.isChecked = !updatedOffer.isChecked;
+    const offers = new Set([...this._data.offers, updatedOffer]);
     this.updateData({
-      offers : updateItem(this._data.offers, updatedOffer),
+      offers: [...offers],
     });
   }
 
   #basePriceChangeHandler = (evt) => {
     evt.preventDefault();
     this.updateData({
-      basePrice: evt.target.value,
+      basePrice: +evt.target.value,
     }, true);
   };
 }

@@ -4,6 +4,8 @@ import { render } from '../utils/render.js';
 import { replace } from '../utils/render.js';
 import TripView from '../views/trip-view';
 import TripEditView from '../views/trip-edit-view';
+import { UserAction } from '../constants.js';
+import { UpdateType } from '../constants.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -13,7 +15,6 @@ export default class TripItemPresenter {
   #tripEventsList = null;
   #changeMode = null;
   #changeData = null;
-  #deleteItem = null;
 
   #tripComponent = null;
   #tripEditComponent = null;
@@ -21,11 +22,10 @@ export default class TripItemPresenter {
   #trip = null;
   #mode = Mode.DEFAULT;
 
-  constructor (tripEventsList, changeMode, changeData, deleteItem) {
+  constructor (tripEventsList, changeMode, changeData) {
     this.#tripEventsList = tripEventsList;
     this.#changeMode = changeMode;
     this.#changeData = changeData;
-    this.#deleteItem = deleteItem;
   }
 
   init = (trip) => {
@@ -95,17 +95,26 @@ export default class TripItemPresenter {
   }
 
   #handleFavoriteClick = () => {
-    this.#changeData({...this.#trip, isFavorite: !this.#trip.isFavorite});
+    this.#changeData(
+      UserAction.UPDATE_DATA,
+      UpdateType.MINOR,
+      {...this.#trip, isFavorite: !this.#trip.isFavorite});
   }
 
   #handleFormSubmit = (trip) => {
     this.#replaceFormToTrip();
-    this.#changeData({...trip});
+    this.#changeData(
+      UserAction.UPDATE_DATA,
+      UpdateType.PATCH,
+      {...trip});
   }
 
   #handleDeleteClick = (trip) => {
     this.destroy();
-    this.#deleteItem({...trip});
+    this.#changeData(
+      UserAction.DELETE_DATA,
+      UpdateType.MINOR,
+      {...trip});
   }
 
   #handleEscKeyDown = (evt) => {
@@ -115,10 +124,4 @@ export default class TripItemPresenter {
       this.#replaceFormToTrip();
     }
   }
-
-  #handleAddTripSaveClick = () => {}
-
-  #handleAddTripCancelClick = () => {}
-
-  #handleValidateUserInput = () => {}
 }
