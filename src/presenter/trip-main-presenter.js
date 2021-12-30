@@ -1,22 +1,34 @@
+import { MenuItem } from '../constants.js';
 import { RenderPosition } from '../constants.js';
+import { remove } from '../utils/render.js';
 import { render } from '../utils/render.js';
 import TripNavigationView from '../views/navigation-view.js';
 import TripInfoView from '../views/trip-info-view.js';
 import FilterPresenter from './filter-presenter.js';
 export default class TripMainPresenter {
-  #trips = [];
   #tripsModel = null;
   #filterModel = null;
-  #tripMainElement = null;
-  #tripNavigationElement = null;
-  #tripFiltersElement = null;
 
-  constructor(tripsModel, filterModel, tripMainElement, tripNavigationElement, tripFiltersElement) {
+  #tripMainContainer = null;
+  #tripNavigationContainer = null;
+  #tripFiltersContainer = null;
+  #tripEventAddBtnContainer = null;
+
+  #tripNavigationComponent = null;
+  #tripInfoComponent = null;
+  #tripEventsPresenter = null;
+  #statisticPresenter = null;
+  #filterPresenter = null;
+
+  #currentMenu = MenuItem.TABLE;
+
+  constructor(tripsModel, filterModel, tripMainElement, tripNavigationElement, tripFiltersElement, tripEventAddBtn) {
     this.#tripsModel = tripsModel;
     this.#filterModel = filterModel;
-    this.#tripMainElement = tripMainElement;
-    this.#tripNavigationElement = tripNavigationElement;
-    this.#tripFiltersElement = tripFiltersElement;
+    this.#tripMainContainer = tripMainElement;
+    this.#tripNavigationContainer = tripNavigationElement;
+    this.#tripFiltersContainer = tripFiltersElement;
+    this.#tripEventAddBtnContainer = tripEventAddBtn;
   }
 
   get trips(){
@@ -24,31 +36,80 @@ export default class TripMainPresenter {
     return trips;
   }
 
-  init = () => {
-    this.#trips = [...this.trips];
+  init = (tripEventsPresenter, statisticPresenter) => {
+    this.#tripEventsPresenter = tripEventsPresenter;
+    this.#statisticPresenter = statisticPresenter;
+
     this.renderTripControls();
-    if (this.#trips.length !== 0) {
-      this.renderTripInfo(this.#trips);
+
+
+    this.#tripEventsPresenter.init(this.renderTripInfo);
+  }
+
+  renderTripInfo = (tripCount) => {
+    if (this.#tripInfoComponent) {
+      remove(this.#tripInfoComponent);
+    }
+
+    if (tripCount !== 0) {
+      this.#tripInfoComponent = new TripInfoView(this.trips);
+      render(this.#tripMainContainer, this.#tripInfoComponent, RenderPosition.AFTERBEGIN);
     }
   }
 
-  renderTripInfo = (trips) => {
-    render(this.#tripMainElement, new TripInfoView(trips), RenderPosition.AFTERBEGIN);
-  }
+  #handleSiteMenuClick = (menuItem) => {
+    const markMenuItem = () => {
+      this.#tripNavigationComponent.setMenuItem(MenuItem.TABLE);
+      this.#tripNavigationComponent.setMenuItem(MenuItem.STATS);
+    };
+
+    if (this.#currentMenu === menuItem) {
+      return;
+    }
+
+    switch (menuItem) {
+      case MenuItem.TABLE:
+        this.#filterPresenter.init();
+        this.#tripEventsPresenter.init(this.renderTripInfo);
+        this.#statisticPresenter.destroy();
+        markMenuItem();
+        break;
+      case MenuItem.STATS:
+        this.#filterPresenter.destroy();
+        this.#tripEventsPresenter.destroy();
+        this.#statisticPresenter.init();
+        markMenuItem();
+        break;
+    }
+
+    this.#currentMenu = menuItem;
+  };
 
   renderTripControls = () => {
     this.renderNavigation();
     this.renderFilters();
+    this.renderEventAddBtn();
   }
 
-  renderEventAddBtn = () => {}
+  renderEventAddBtn = () => {
+    this.#tripEventAddBtnContainer.addEventListener('click', (evt) => {
+      evt.preventDefault();
+      this.#tripEventsPresenter.createTrip();
+    });
+  };
 
   renderNavigation = () => {
-    render(this.#tripNavigationElement, new TripNavigationView(), RenderPosition.BEFOREEND);
+    this.#tripNavigationComponent = new TripNavigationView();
+
+    render(this.#tripNavigationContainer, this.#tripNavigationComponent, RenderPosition.BEFOREEND);
+
+    this.#tripNavigationComponent.setMenuClickHandler(this.#handleSiteMenuClick);
+
+    this.#tripNavigationComponent.setMenuItem(this.#currentMenu);
   }
 
   renderFilters = () => {
-    const filterPresenter = new FilterPresenter(this.#tripFiltersElement, this.#filterModel, this.#tripsModel);
-    filterPresenter.init();
+    this.#filterPresenter = new FilterPresenter(this.#tripFiltersContainer, this.#filterModel, this.#tripsModel);
+    this.#filterPresenter.init();
   }
 }

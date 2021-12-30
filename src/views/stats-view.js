@@ -1,12 +1,8 @@
-import AbstractView from './abstract-view.js';
+import SmartView from './smart-view.js';
 
 const createStatsTemplate = () => (
   `<section class="statistics">
     <h2 class="visually-hidden">Trip statistics</h2>
-
-    <!-- Пример диаграмм -->
-    <img src="img/big-trip-stats-markup.png" alt="Пример диаграмм">
-
     <div class="statistics__item">
       <canvas class="statistics__chart" id="money" width="900"></canvas>
     </div>
@@ -20,7 +16,7 @@ const createStatsTemplate = () => (
     </div>
   </section>`
 );
-export default class StatsView extends AbstractView {
+export default class StatsView extends SmartView {
 
   get template() {
     return createStatsTemplate();

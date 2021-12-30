@@ -28,6 +28,8 @@ export default class TripEventsPresenter {
   #currentSortType = SortType.day;
   #filterType = FilterType.EVERYTHING;
 
+  #updateTripInfo = null;
+
   constructor (tripsModel, filterModel, tripEventsElement) {
     this.#tripsModel = tripsModel;
     this.#filterModel = filterModel;
@@ -55,17 +57,18 @@ export default class TripEventsPresenter {
     return filteredTrips;
   }
 
-  init = () => {
+  init = (callBack) => {
     this.#tripsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
 
+    this.#updateTripInfo = callBack;
     this.#renderTripEvents();
   }
 
   destroy = () => {
-    this.#clearTripEvents = ({resetSortType: false});
+    this.#clearTripEvents({resetSortType: false});
 
-    remove(this.#tripEventsElement);
+    //remove(this.#tripEventsElement);
     remove(this.#tripEventsListComponent);
 
     this.#tripsModel.removeObserver(this.#handleModelEvent);
@@ -81,6 +84,8 @@ export default class TripEventsPresenter {
   #renderTripEvents = () => {
     const trips = this.trips;
     const tripCount = trips.length;
+
+    this.#updateTripInfo(tripCount);
 
     if (tripCount === 0) {
       this.#renderNoTrip();
@@ -124,6 +129,8 @@ export default class TripEventsPresenter {
   }
 
   #renderNoTrip = () => {
+    render(this.#tripEventsElement, this.#tripEventsListComponent, RenderPosition.BEFOREEND);
+
     this.#noTripComponent = new NoTripView(this.#filterType);
     render(this.#tripEventsElement, this.#noTripComponent, RenderPosition.BEFOREEND);
   }
@@ -167,6 +174,7 @@ export default class TripEventsPresenter {
     switch (updateType) {
       case UpdateType.PATCH:
         this.#tripItemPresenters.get(data.id).init(data);
+        this.#updateTripInfo();
         break;
       case UpdateType.MINOR:
         this.#clearTripEvents();
