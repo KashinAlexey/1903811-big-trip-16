@@ -42,8 +42,10 @@ export default class TripMainPresenter {
 
     this.renderTripControls();
 
-
-    this.#tripEventsPresenter.init(this.renderTripInfo);
+    this.#tripsModel.init().finally(() => {
+      this.#tripEventsPresenter.init(this.renderTripInfo);
+    }
+    );
   }
 
   renderTripInfo = (tripCount) => {

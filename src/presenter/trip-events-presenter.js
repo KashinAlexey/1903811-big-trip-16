@@ -78,7 +78,7 @@ export default class TripEventsPresenter {
   createTrip = (callback) => {
     this.#filterType = FilterType.EVERYTHING;
     this.#filterModel.setFilter(UpdateType.MAJOR, this.#filterType);
-    this.#tripNewPresenter.init(callback);
+    this.#tripNewPresenter.init(callback, this.#tripsModel.getDestinations(), this.#tripsModel.getOffers());
   }
 
   #renderTripEvents = () => {
@@ -137,7 +137,7 @@ export default class TripEventsPresenter {
 
   #renderTripItem = (trip) => {
     const tripItemPresenter = new TripItemPresenter(this.#tripEventsListComponent, this.#handleTripModeChange, this.#handleViewAction);
-    tripItemPresenter.init(trip);
+    tripItemPresenter.init(trip, this.#tripsModel.getDestinations(), this.#tripsModel.getOffers());
     this.#tripItemPresenters.set(trip.id, tripItemPresenter);
   }
 
@@ -173,7 +173,7 @@ export default class TripEventsPresenter {
   #handleModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        this.#tripItemPresenters.get(data.id).init(data);
+        this.#tripItemPresenters.get(data.id).init(data, this.#tripsModel.getDestinations(), this.#tripsModel.getOffers());
         this.#updateTripInfo();
         break;
       case UpdateType.MINOR:

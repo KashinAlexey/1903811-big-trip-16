@@ -1,14 +1,38 @@
 import AbstractObservable from '../utils/abstract-observable.js';
-
 export default class DataModel extends AbstractObservable {
   #data = [];
+  #destinations = [];
+  #offers = [];
+  #apiService = null;
 
-  set data(data) {
-    this.#data = [...data];
+  constructor(apiService) {
+    super();
+    this.#apiService = apiService;
+  }
+
+  init = async () => {
+    try {
+      const data = await this.#apiService.data;
+      const destinations = await this.#apiService.getDestinations();
+      const offers = await this.#apiService.getOffers();
+      this.#data = data.map(this.#adaptToClient);
+      this.#destinations = destinations;
+      this.#offers = offers;
+    } catch(err) {
+      this.#data = [];
+    }
   }
 
   get data() {
     return this.#data;
+  }
+
+  getDestinations() {
+    return this.#destinations;
+  }
+
+  getOffers() {
+    return this.#offers;
   }
 
   updateData = (updateType, update) => {
@@ -49,5 +73,21 @@ export default class DataModel extends AbstractObservable {
     ];
 
     this._notify(updateType);
+  }
+
+  #adaptToClient = (data) => {
+    const adaptedData = {...data,
+      basePrice: data['base_price'],
+      dateFrom: data['date_from'] !== null ? new Date(data['date_from']) : data['date_from'],
+      dateTo: data['date_to'] !== null ? new Date(data['date_to']) : data['date_to'],
+      isFavorite: data['is_favorite'],
+    };
+
+    delete adaptedData['base_price'];
+    delete adaptedData['date_from'];
+    delete adaptedData['date_to'];
+    delete adaptedData['is_favorite'];
+
+    return adaptedData;
   }
 }

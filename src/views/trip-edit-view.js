@@ -1,19 +1,17 @@
 import { DAY_TIME_FORMAT } from '../constants.js';
-import { destinationsList } from '../mock/trip.js';
 import { formatDate } from '../utils/common.js';
 import flatpickr from 'flatpickr';
 import { getObjectFromArray } from '../utils/common.js';
-import { getKeyByValue } from '../utils/common.js';
-import { OFFER_TITLE_TO_NAME } from '../constants.js';
 import SmartView from './smart-view.js';
 import { TRIP_TYPES } from '../constants.js';
-import { typeWithOffersList } from '../mock/trip.js';
 import he from 'he';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
+let destinationsList = [];
+let typeWithOffersList = [];
+
 const getCheckedOffers = (trip, isNewTrip) => {
   const { offers } = getObjectFromArray(typeWithOffersList, trip.type);
-
   const checkedOffer = [];
 
   for (let i = 0; i < offers.length; i++) {
@@ -82,15 +80,15 @@ const createTripEditOfferTemplate = (offers) => (`
       ${offers.map(({id, title, price, isChecked}) => `<div class="event__offer-selector">
       <input
         class="event__offer-checkbox  visually-hidden"
-        id="event-offer-${getKeyByValue(OFFER_TITLE_TO_NAME, title)}-1"
+        id="event-offer-${id}-1"
         type="checkbox"
-        name="event-offer-${getKeyByValue(OFFER_TITLE_TO_NAME, title)}"
+        name="event-offer-${id}"
         data-event-offer-id="${id}"
         ${isChecked ? 'checked': ''}
       >
       <label
         class="event__offer-label"
-        for="event-offer-${getKeyByValue(OFFER_TITLE_TO_NAME, title)}-1">
+        for="event-offer-${id}-1">
         <span class="event__offer-title">
           ${title}
         </span>
@@ -261,8 +259,10 @@ export default class TripEditView extends SmartView {
   #dateFromPicker = null;
   #dateToPicker = null;
 
-  constructor(trip) {
+  constructor(trip, destinations, offers) {
     super();
+    destinationsList = destinations;
+    typeWithOffersList = offers;
     this._data = TripEditView.parseTaskToData(trip);
     this.#setInnerHandlers();
     this.#setDatepicker();
@@ -411,7 +411,7 @@ export default class TripEditView extends SmartView {
 
   #offerChangeHandler = (evt) => {
     evt.preventDefault();
-    const updatedOffer = getObjectFromArray(this._data.offers, evt.target.dataset.eventOfferId);
+    const updatedOffer = getObjectFromArray(this._data.offers, +evt.target.dataset.eventOfferId);
     updatedOffer.isChecked = !updatedOffer.isChecked;
     const offers = new Set([...this._data.offers, updatedOffer]);
     this.updateData({

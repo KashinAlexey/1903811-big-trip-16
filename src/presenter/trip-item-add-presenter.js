@@ -17,14 +17,14 @@ export default class TripItemAddPresenter {
     this.#changeData = changeData;
   }
 
-  init = (callback) => {
+  init = (callback, destinations, offers) => {
     this.#destroyCallback = callback;
 
     if (this.#tripAddComponent !== null) {
       return;
     }
 
-    this.#tripAddComponent = new TripAddView();
+    this.#tripAddComponent = new TripAddView(destinations, offers);
 
     this.#tripAddComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#tripAddComponent.setDeleteClickHandler(this.#handleDeleteClick);

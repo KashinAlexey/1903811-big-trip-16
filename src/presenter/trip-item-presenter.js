@@ -28,14 +28,14 @@ export default class TripItemPresenter {
     this.#changeData = changeData;
   }
 
-  init = (trip) => {
+  init = (trip, destination, offers) => {
     this.#trip = trip;
 
     const previousTripComponent = this.#tripComponent;
     const previousTripEditComponent = this.#tripEditComponent;
 
     this.#tripComponent = new TripView(trip);
-    this.#tripEditComponent = new TripEditView(trip);
+    this.#tripEditComponent = new TripEditView(trip, destination, offers);
 
     this.#tripComponent.setEditClickHandler(this.#handleEditClick);
     this.#tripComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
