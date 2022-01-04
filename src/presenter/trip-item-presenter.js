@@ -1,3 +1,4 @@
+import { Mode } from '../constants.js';
 import { RenderPosition } from '../constants.js';
 import { remove } from '../utils/render.js';
 import { render } from '../utils/render.js';
@@ -7,10 +8,6 @@ import TripEditView from '../views/trip-edit-view';
 import { UserAction } from '../constants.js';
 import { UpdateType } from '../constants.js';
 
-const Mode = {
-  DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
-};
 export default class TripItemPresenter {
   #tripEventsList = null;
   #changeMode = null;

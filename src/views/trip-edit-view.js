@@ -64,6 +64,7 @@ const createTripEditDestinationListTemplate = (destination) => (`
     name="event-destination"
     value="${he.encode(destination.name)}"
     list="destination-list-1"
+    autocomplete="off"
   >
 
   <datalist id="destination-list-1">

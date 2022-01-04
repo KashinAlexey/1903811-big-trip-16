@@ -1,3 +1,6 @@
+import { filter } from '../utils/filter.js';
+import { FilterType } from '../constants.js';
+import { Mode } from '../constants.js';
 import NoTripView from '../views/no-trip-view.js';
 import { RenderPosition } from '../constants.js';
 import { remove, render } from '../utils/render.js';
@@ -11,8 +14,6 @@ import TripItemPresenter from './trip-item-presenter.js';
 import TripItemAddPresenter from './trip-item-add-presenter.js';
 import { UserAction } from '../constants.js';
 import { UpdateType } from '../constants.js';
-import { filter } from '../utils/filter.js';
-import { FilterType } from '../constants.js';
 export default class TripEventsPresenter {
   #tripEventsElement = null;
   #tripsModel = null;
@@ -29,6 +30,7 @@ export default class TripEventsPresenter {
   #filterType = FilterType.EVERYTHING;
 
   #updateTripInfo = null;
+  #mode = Mode.DEFAULT;
 
   constructor (tripsModel, filterModel, tripEventsElement) {
     this.#tripsModel = tripsModel;
@@ -67,18 +69,21 @@ export default class TripEventsPresenter {
 
   destroy = () => {
     this.#clearTripEvents({resetSortType: false});
-
-    //remove(this.#tripEventsElement);
     remove(this.#tripEventsListComponent);
-
     this.#tripsModel.removeObserver(this.#handleModelEvent);
     this.#filterModel.removeObserver(this.#handleModelEvent);
   }
 
-  createTrip = (callback) => {
-    this.#filterType = FilterType.EVERYTHING;
-    this.#filterModel.setFilter(UpdateType.MAJOR, this.#filterType);
-    this.#tripNewPresenter.init(callback, this.#tripsModel.getDestinations(), this.#tripsModel.getOffers());
+  createTrip = () => {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#mode = Mode.EDITING;
+      this.#filterType = FilterType.EVERYTHING;
+      this.#filterModel.setFilter(UpdateType.MAJOR, this.#filterType);
+      this.#tripNewPresenter.init(this.#tripsModel.getDestinations(), this.#tripsModel.getOffers(), () => {this.#mode = Mode.DEFAULT;});
+    } else {
+      this.#tripNewPresenter.destroy();
+      this.#mode = Mode.DEFAULT;
+    }
   }
 
   #renderTripEvents = () => {

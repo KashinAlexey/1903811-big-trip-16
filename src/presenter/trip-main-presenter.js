@@ -1,10 +1,10 @@
+import FilterPresenter from './filter-presenter.js';
 import { MenuItem } from '../constants.js';
 import { RenderPosition } from '../constants.js';
 import { remove } from '../utils/render.js';
 import { render } from '../utils/render.js';
 import TripNavigationView from '../views/navigation-view.js';
 import TripInfoView from '../views/trip-info-view.js';
-import FilterPresenter from './filter-presenter.js';
 export default class TripMainPresenter {
   #tripsModel = null;
   #filterModel = null;

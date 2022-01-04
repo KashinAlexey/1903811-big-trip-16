@@ -1,5 +1,7 @@
 import { FilterType } from '../constants.js';
-import { isDateAfter, isDateBefore, isDateToday } from '../mock/util-mock.js';
+import { isDateAfter } from '../utils/common.js';
+import { isDateBefore } from '../utils/common.js';
+import { isDateToday } from '../utils/common.js';
 
 export const filter = {
   [FilterType.EVERYTHING]: (trips) => trips,

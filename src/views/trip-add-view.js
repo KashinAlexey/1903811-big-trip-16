@@ -82,6 +82,7 @@ const createTripEditDestinationListTemplate = (destination) => (`
     name="event-destination"
     value="${he.encode(destination.name)}"
     list="destination-list-1"
+    autocomplete="off"
   >
 
   <datalist id="destination-list-1">
@@ -187,7 +188,7 @@ const createTripEditBasePriceTemplate = (basePrice) => (`
       class="event__input  event__input--price"
       id="event-price-1"
       type="number"
-      min = 0
+      min = 1
       name="event-price"
       value="${basePrice}"
     />

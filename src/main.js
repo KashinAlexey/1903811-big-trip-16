@@ -1,9 +1,9 @@
+import ApiService from './api-service.js';
 import DataModel from './model/data-model.js';
 import FilterModel from './model/filter-model.js';
 import StatisticPresenter from './presenter/statistic-presenter.js';
 import TripMainPresenter from './presenter/trip-main-presenter.js';
 import TripEventsPresenter from './presenter/trip-events-presenter.js';
-import ApiService from './api-service.js';
 
 const AUTHORIZATION = 'Basic lkjuhfiub7623r8fwqiuvcg';
 const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
@@ -25,4 +25,3 @@ const tripEventsPresenter = new TripEventsPresenter(tripsModel, filterModel, tri
 const statisticPresenter = new StatisticPresenter(tripsModel, siteMainElement);
 
 tripMainPresenter.init(tripEventsPresenter, statisticPresenter);
-

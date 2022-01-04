@@ -54,7 +54,7 @@ export const deleteItem = (items, update) => {
   ];
 };
 
-// Compare functions in arr.sort()
+// Compare functions in arr.sort(foo)
 const getWeightForNull = (A, B) => {
   if (A === null && B === null) {
     return 0;
@@ -91,6 +91,7 @@ export const sortDuration = (startA, endA, startB, endB, type) => {
   return type === 'Up'? weight ?? durationB - durationA : weight ?? durationA - durationB;
 };
 
+// Working with object
 export const getObjectFromArray = (arr, value) => {
   for (let i=0; i< arr.length; i++) {
     if (Object.values(arr[i]).includes(value)) {

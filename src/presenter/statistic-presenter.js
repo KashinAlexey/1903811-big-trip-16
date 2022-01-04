@@ -1,12 +1,12 @@
-import StatsView from '../views/stats-view.js';
+import Chart from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { calculateDateDiff } from '../utils/common.js';
 import { RenderPosition } from '../constants.js';
 import { render } from '../utils/render.js';
 import { remove } from '../utils/render.js';
-import Chart from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { TRIP_TYPES } from '../constants.js';
 import { sortNumber } from '../utils/common.js';
-import { calculateDateDiff } from '../utils/common.js';
+import StatsView from '../views/stats-view.js';
+import { TRIP_TYPES } from '../constants.js';
 
 const getCosts = (trips) => {
   const data = {

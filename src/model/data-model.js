@@ -35,44 +35,58 @@ export default class DataModel extends AbstractObservable {
     return this.#offers;
   }
 
-  updateData = (updateType, update) => {
+  updateData = async (updateType, update) => {
     const index = this.#data.findIndex((data) => data.id === update.id);
 
     if (index === -1) {
-      throw new Error('Can\'t update unexisting task');
+      throw new Error('Can\'t update unexisting data');
     }
 
-    this.#data = [
-      ...this.#data.slice(0, index),
-      update,
-      ...this.#data.slice(index + 1),
-    ];
-
-    this._notify(updateType, update);
+    try {
+      const response = await this.#apiService.updateData(update);
+      const updatedData = this.#adaptToClient(response);
+      this.#data = [
+        ...this.#data.slice(0, index),
+        update,
+        ...this.#data.slice(index + 1),
+      ];
+      this._notify(updateType, updatedData);
+    } catch(err) {
+      throw new Error('Can\'t update data');
+    }
   }
 
-  addData = (updateType, update) => {
-    this.#data = [
-      update,
-      ...this.#data,
-    ];
-
-    this._notify(updateType, update);
+  addData = async (updateType, update) => {
+    try {
+      const response = await this.#apiService.addData(update);
+      const newData = this.#adaptToClient(response);
+      this.#data = [
+        newData,
+        ...this.#data
+      ];
+      this._notify(updateType, newData);
+    } catch(err) {
+      throw new Error('Can\'t add data');
+    }
   }
 
-  deleteData = (updateType, update) => {
+  deleteData = async (updateType, update) => {
     const index = this.#data.findIndex((data) => data.id === update.id);
 
     if (index === -1) {
-      throw new Error('Can\'t delete unexisting task');
+      throw new Error('Can\'t delete unexisting data');
     }
 
-    this.#data = [
-      ...this.#data.slice(0, index),
-      ...this.#data.slice(index + 1),
-    ];
-
-    this._notify(updateType);
+    try {
+      await this.#apiService.deleteData(update);
+      this.#data = [
+        ...this.#data.slice(0, index),
+        ...this.#data.slice(index + 1),
+      ];
+      this._notify(updateType);
+    } catch(err) {
+      throw new Error('Can\'t delete data');
+    }
   }
 
   #adaptToClient = (data) => {
