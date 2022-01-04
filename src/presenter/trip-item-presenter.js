@@ -1,3 +1,4 @@
+import { Mode } from '../constants.js';
 import { RenderPosition } from '../constants.js';
 import { remove } from '../utils/render.js';
 import { render } from '../utils/render.js';
@@ -7,10 +8,6 @@ import TripEditView from '../views/trip-edit-view';
 import { UserAction } from '../constants.js';
 import { UpdateType } from '../constants.js';
 
-const Mode = {
-  DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
-};
 export default class TripItemPresenter {
   #tripEventsList = null;
   #changeMode = null;
@@ -28,14 +25,14 @@ export default class TripItemPresenter {
     this.#changeData = changeData;
   }
 
-  init = (trip) => {
+  init = (trip, destination, offers) => {
     this.#trip = trip;
 
     const previousTripComponent = this.#tripComponent;
     const previousTripEditComponent = this.#tripEditComponent;
 
     this.#tripComponent = new TripView(trip);
-    this.#tripEditComponent = new TripEditView(trip);
+    this.#tripEditComponent = new TripEditView(trip, destination, offers);
 
     this.#tripComponent.setEditClickHandler(this.#handleEditClick);
     this.#tripComponent.setFavoriteClickHandler(this.#handleFavoriteClick);

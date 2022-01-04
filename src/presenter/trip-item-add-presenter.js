@@ -4,27 +4,26 @@ import { render } from '../utils/render.js';
 import TripAddView from '../views/trip-add-view.js';
 import { UserAction } from '../constants.js';
 import { UpdateType } from '../constants.js';
-import { generateId } from '../mock/util-mock.js';
 
 export default class TripItemAddPresenter {
   #tripEventsList = null;
   #changeData = null;
   #tripAddComponent = null;
-  #destroyCallback = null;
+  #callback = null;
 
   constructor (tripEventsList, changeData) {
     this.#tripEventsList = tripEventsList;
     this.#changeData = changeData;
   }
 
-  init = (callback) => {
-    this.#destroyCallback = callback;
-
+  init = (destinations, offers, callBack) => {
     if (this.#tripAddComponent !== null) {
       return;
     }
 
-    this.#tripAddComponent = new TripAddView();
+    this.#callback = callBack;
+
+    this.#tripAddComponent = new TripAddView(destinations, offers);
 
     this.#tripAddComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#tripAddComponent.setDeleteClickHandler(this.#handleDeleteClick);
@@ -38,8 +37,6 @@ export default class TripItemAddPresenter {
       return;
     }
 
-    this.#destroyCallback?.();
-
     remove(this.#tripAddComponent);
     this.#tripAddComponent = null;
 
@@ -50,18 +47,21 @@ export default class TripItemAddPresenter {
     this.#changeData(
       UserAction.ADD_DATA,
       UpdateType.MINOR,
-      {id: generateId(),...trip}
+      {...trip},
     );
+    this.#callback();
     this.destroy();
   }
 
   #handleDeleteClick = () => {
+    this.#callback();
     this.destroy();
   }
 
   #handleEscKeyDown = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
+      this.#callback();
       this.destroy();
     }
   }

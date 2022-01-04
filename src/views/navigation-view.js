@@ -14,12 +14,6 @@ const createTripNavigationTemplate = (currentMenu) => (
   </nav>`
 );
 export default class TripNavigationView extends AbstractView {
-  #currentMenu = null;
-
-  constructor(currentMenu) {
-    super();
-    this.#currentMenu = currentMenu;
-  }
 
   get template() {
     return createTripNavigationTemplate();
@@ -27,7 +21,6 @@ export default class TripNavigationView extends AbstractView {
 
   setMenuItem = (menuItem) => {
     const item = this.element.querySelector(`[data-trip-controls-type="${menuItem}"]`);
-
     item.classList.toggle('trip-tabs__btn--active');
   }
 
