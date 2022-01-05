@@ -19,7 +19,7 @@ export default class DataModel extends AbstractObservable {
       this.#destinations = destinations;
       this.#offers = offers;
     } catch(err) {
-      this.#data = [];
+      this.#data = null;
     }
   }
 

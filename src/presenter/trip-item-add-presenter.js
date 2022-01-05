@@ -43,6 +43,25 @@ export default class TripItemAddPresenter {
     document.removeEventListener('keydown', this.#handleEscKeyDown);
   }
 
+  setSaving = () => {
+    this.#tripAddComponent.updateData({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
+  setAborting = () => {
+    const resetFormState = () => {
+      this.#tripAddComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#tripAddComponent.shake(resetFormState);
+  }
+
   #handleFormSubmit = (trip) => {
     this.#changeData(
       UserAction.ADD_DATA,
@@ -50,7 +69,6 @@ export default class TripItemAddPresenter {
       {...trip},
     );
     this.#callback();
-    this.destroy();
   }
 
   #handleDeleteClick = () => {

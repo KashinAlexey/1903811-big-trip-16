@@ -7,6 +7,8 @@ export const RenderPosition = {
 
 export const TRIP_COUNT = 5;
 
+export const SHAKE_ANIMATION_TIMEOUT = 600;
+
 export const TRIP_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
 export const OFFER_TITLE_TO_NAME =  {
@@ -62,4 +64,10 @@ export const Method = {
   PUT: 'PUT',
   POST: 'POST',
   DELETE: 'DELETE',
+};
+
+export const LoadingType = {
+  LOADING: 'LOADING',
+  SUCCESS: 'SUCCESS',
+  ERROR: 'ERROR'
 };

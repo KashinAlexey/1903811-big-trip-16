@@ -33,7 +33,7 @@ const getCheckedOffers = (trip, isNewTrip) => {
   return checkedOffer;
 };
 
-const createTripEditTypeListTemplate = () =>(`
+const createTripEditTypeListTemplate = (isDisabled) =>(`
   <div class="event__type-list">
     <fieldset class="event__type-group">
       <legend class="visually-hidden">
@@ -47,6 +47,7 @@ const createTripEditTypeListTemplate = () =>(`
           type="radio"
           name="event-type"
           value="${type}"
+          ${isDisabled ? 'disabled' : ''}
         >
         <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">
           ${type.charAt(0).toUpperCase() + type.slice(1)}
@@ -56,7 +57,7 @@ const createTripEditTypeListTemplate = () =>(`
   </div>`
 );
 
-const createTripEditDestinationListTemplate = (destination) => (`
+const createTripEditDestinationListTemplate = (destination, isDisabled) => (`
   <input
     class="event__input  event__input--destination"
     id="event-destination-1"
@@ -65,6 +66,7 @@ const createTripEditDestinationListTemplate = (destination) => (`
     value="${he.encode(destination.name)}"
     list="destination-list-1"
     autocomplete="off"
+    ${isDisabled ? 'disabled' : ''}
   >
 
   <datalist id="destination-list-1">
@@ -72,7 +74,7 @@ const createTripEditDestinationListTemplate = (destination) => (`
   </datalist>`
 );
 
-const createTripEditOfferTemplate = (offers) => (`
+const createTripEditOfferTemplate = (offers, isDisabled) => (`
   <section class="event__section  event__section--offers" ${offers.length === 0 ? 'hidden' : ''}>
     <h3 class="event__section-title  event__section-title--offers">
       Offers
@@ -86,6 +88,7 @@ const createTripEditOfferTemplate = (offers) => (`
         name="event-offer-${id}"
         data-event-offer-id="${id}"
         ${isChecked ? 'checked': ''}
+        ${isDisabled ? 'disabled' : ''}
       >
       <label
         class="event__offer-label"
@@ -116,7 +119,7 @@ const createTripEditDestinationTemplate = (destination) => {
   </section>`;
 };
 
-const createTripEditTimeTemplate = (dateFrom, dateTo) => (`
+const createTripEditTimeTemplate = (dateFrom, dateTo, isDisabled) => (`
   <div class="event__field-group  event__field-group--time">
     <label
       class="visually-hidden"
@@ -129,6 +132,7 @@ const createTripEditTimeTemplate = (dateFrom, dateTo) => (`
       type="text"
       name="event-start-time"
       value="${formatDate(dateFrom, DAY_TIME_FORMAT)}"
+      ${isDisabled ? 'disabled' : ''}
     >
     &mdash;
     <label
@@ -142,11 +146,12 @@ const createTripEditTimeTemplate = (dateFrom, dateTo) => (`
       type="text"
       name="event-end-time"
       value="${formatDate(dateTo, DAY_TIME_FORMAT)}"
+      ${isDisabled ? 'disabled' : ''}
     >
   </div>`
 );
 
-const createTripEditBasePriceTemplate = (basePrice) => (`
+const createTripEditBasePriceTemplate = (basePrice, isDisabled) => (`
   <div class="event__field-group  event__field-group--price">
     <label
       class="event__label"
@@ -162,25 +167,28 @@ const createTripEditBasePriceTemplate = (basePrice) => (`
       type="number"
       min = 0
       name="event-price"
+      autocomplete="off"
       value="${basePrice}"
+      ${isDisabled ? 'disabled' : ''}
     />
   </div>`
 );
 
 const createTripEditTemplate = (data) => {
-  const {type, dateFrom, dateTo, destination, basePrice, offers} = data;
+  const {type, dateFrom, dateTo, destination, basePrice, offers, isDisabled,
+    isSaving, isDeleting} = data;
 
   const destinationTemplate = createTripEditDestinationTemplate(destination);
 
-  const offerTemplate = createTripEditOfferTemplate(offers);
+  const offerTemplate = createTripEditOfferTemplate(offers, isDisabled);
 
-  const typeListTemplate = createTripEditTypeListTemplate();
+  const typeListTemplate = createTripEditTypeListTemplate(isDisabled);
 
-  const destinationListTemplate = createTripEditDestinationListTemplate(destination);
+  const destinationListTemplate = createTripEditDestinationListTemplate(destination, isDisabled);
 
-  const timeTemplate = createTripEditTimeTemplate(dateFrom, dateTo);
+  const timeTemplate = createTripEditTimeTemplate(dateFrom, dateTo, isDisabled);
 
-  const basePriceTemplate = createTripEditBasePriceTemplate(basePrice);
+  const basePriceTemplate = createTripEditBasePriceTemplate(basePrice, isDisabled);
 
   const isSubmitDisabled = (dateFrom > dateTo);
 
@@ -188,7 +196,8 @@ const createTripEditTemplate = (data) => {
     <form
       class="event event--edit"
       action="#"
-      method="post">
+      method="post"
+      ${isDisabled ? 'disabled' : ''}>
 
       <header class="event__header">
         <div class="event__type-wrapper">
@@ -209,6 +218,7 @@ const createTripEditTemplate = (data) => {
             class="event__type-toggle  visually-hidden"
             id="event-type-toggle-1"
             type="checkbox"
+            ${isDisabled ? 'disabled' : ''}
           >
           ${typeListTemplate}
         </div>
@@ -230,13 +240,13 @@ const createTripEditTemplate = (data) => {
           class="event__save-btn  btn  btn--blue"
           type="submit"
           ${isSubmitDisabled ? 'disabled' : ''}>
-          Save
+          ${isSaving ? 'Saving...' : 'Save'}
         </button>
 
         <button
           class="event__reset-btn"
           type="reset">
-          Delete
+          ${isDeleting ? 'Deleting...' : 'Delete'}
         </button>
 
         <button
@@ -288,16 +298,24 @@ export default class TripEditView extends SmartView {
   }
 
   reset = (trip) => {
-    this.updateData({...trip});
+    this.updateData({...trip, offers: getCheckedOffers(trip, false)});
   }
 
-  static parseTaskToData = (trip) => ({...trip,
-    offers: getCheckedOffers(trip, false)}
+  static parseTaskToData = (trip) => (
+    {...trip,
+      offers: getCheckedOffers(trip, false),
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,}
   );
 
   static parseDataToTask = (data) => {
     const offers = data.offers.filter((offer) => offer.isChecked);
     offers.forEach((offer) => delete offer.isChecked);
+
+    delete data.isDisabled;
+    delete data.isSaving;
+    delete data.isDeleting;
 
     const trip = {...data, offers};
 

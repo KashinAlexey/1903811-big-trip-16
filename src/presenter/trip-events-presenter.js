@@ -1,9 +1,13 @@
+import ErrorView from '../views/error-view.js';
 import { filter } from '../utils/filter.js';
 import { FilterType } from '../constants.js';
+import LoadingView from '../views/loading-view.js';
+import { LoadingType } from '../constants.js';
 import { Mode } from '../constants.js';
 import NoTripView from '../views/no-trip-view.js';
 import { RenderPosition } from '../constants.js';
 import { remove, render } from '../utils/render.js';
+import { State as TripPresenterViewState } from './trip-item-presenter.js';
 import SortView from '../views/sort-view.js';
 import { SortType } from '../constants.js';
 import { sortNumber } from '../utils/common.js';
@@ -22,6 +26,7 @@ export default class TripEventsPresenter {
   #tripEventsListComponent = new TripListView();
   #sortComponent = null;
   #noTripComponent = null;
+  #loadingComponent = null;
 
   #tripItemPresenters = new Map();
   #tripNewPresenter = null;
@@ -31,6 +36,7 @@ export default class TripEventsPresenter {
 
   #updateTripInfo = null;
   #mode = Mode.DEFAULT;
+  #loadingType = null;
 
   constructor (tripsModel, filterModel, tripEventsElement) {
     this.#tripsModel = tripsModel;
@@ -59,7 +65,8 @@ export default class TripEventsPresenter {
     return filteredTrips;
   }
 
-  init = (callBack) => {
+  init = (callBack, loadyngType) => {
+    this.#loadingType = loadyngType;
     this.#tripsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
 
@@ -87,6 +94,17 @@ export default class TripEventsPresenter {
   }
 
   #renderTripEvents = () => {
+    if (this.#loadingType === LoadingType.LOADING) {
+      this.#renderLoading();
+      return;
+    } else if (this.#loadingType === LoadingType.ERROR) {
+      remove(this.#loadingComponent);
+      this.#renderError();
+      return;
+    } else {
+      remove(this.#loadingComponent);
+    }
+
     const trips = this.trips;
     const tripCount = trips.length;
 
@@ -140,6 +158,18 @@ export default class TripEventsPresenter {
     render(this.#tripEventsElement, this.#noTripComponent, RenderPosition.BEFOREEND);
   }
 
+  #renderLoading = () => {
+    render(this.#tripEventsElement, this.#tripEventsListComponent, RenderPosition.BEFOREEND);
+    this.#loadingComponent = new LoadingView();
+    render(this.#tripEventsElement, this.#loadingComponent, RenderPosition.BEFOREEND);
+  }
+
+  #renderError = () => {
+    render(this.#tripEventsElement, this.#tripEventsListComponent, RenderPosition.BEFOREEND);
+    this.#loadingComponent = new ErrorView();
+    render(this.#tripEventsElement, this.#loadingComponent, RenderPosition.BEFOREEND);
+  }
+
   #renderTripItem = (trip) => {
     const tripItemPresenter = new TripItemPresenter(this.#tripEventsListComponent, this.#handleTripModeChange, this.#handleViewAction);
     tripItemPresenter.init(trip, this.#tripsModel.getDestinations(), this.#tripsModel.getOffers());
@@ -161,16 +191,31 @@ export default class TripEventsPresenter {
     this.#tripItemPresenters.forEach((presenter) => presenter.resetTripView());
   }
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_DATA:
-        this.#tripsModel.updateData(updateType, update);
+        this.#tripItemPresenters.get(update.id).setViewState(TripPresenterViewState.SAVING);
+        try {
+          await this.#tripsModel.updateData(updateType, update);
+        } catch(err) {
+          this.#tripItemPresenters.get(update.id).setViewState(TripPresenterViewState.ABORTING);
+        }
         break;
       case UserAction.ADD_DATA:
-        this.#tripsModel.addData(updateType, update);
+        this.#tripNewPresenter.setSaving();
+        try {
+          await this.#tripsModel.addData(updateType, update);
+        } catch(err) {
+          this.#tripNewPresenter.setAborting();
+        }
         break;
       case UserAction.DELETE_DATA:
-        this.#tripsModel.deleteData(updateType, update);
+        this.#tripItemPresenters.get(update.id).setViewState(TripPresenterViewState.DELETING);
+        try {
+          await this.#tripsModel.deleteData(updateType, update);
+        } catch(err) {
+          this.#tripItemPresenters.get(update.id).setViewState(TripPresenterViewState.ABORTING);
+        }
         break;
     }
   }

@@ -8,6 +8,11 @@ import TripEditView from '../views/trip-edit-view';
 import { UserAction } from '../constants.js';
 import { UpdateType } from '../constants.js';
 
+export const State = {
+  SAVING: 'SAVING',
+  DELETING: 'DELETING',
+  ABORTING: 'ABORTING',
+};
 export default class TripItemPresenter {
   #tripEventsList = null;
   #changeMode = null;
@@ -41,7 +46,7 @@ export default class TripItemPresenter {
     this.#tripEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
 
     if (previousTripComponent === null || previousTripEditComponent === null) {
-      render(this.#tripEventsList, this.#tripComponent.element, RenderPosition.BEFOREEND);
+      render(this.#tripEventsList, this.#tripComponent, RenderPosition.BEFOREEND);
       return;
     }
 
@@ -50,7 +55,8 @@ export default class TripItemPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#tripEditComponent, previousTripEditComponent);
+      replace(this.#tripComponent, previousTripEditComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(previousTripComponent);
@@ -64,6 +70,7 @@ export default class TripItemPresenter {
 
   #replaceTripToForm = () => {
     replace(this.#tripEditComponent, this.#tripComponent);
+    document.addEventListener('keydown', this.#handleEscKeyDown);
     this.#changeMode();
     this.#mode = Mode.EDITING;
   }
@@ -81,10 +88,42 @@ export default class TripItemPresenter {
     }
   }
 
+  setViewState = (state) => {
+    if (this.#mode === Mode.DEFAULT) {
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#tripEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this.#tripEditComponent.updateData({
+          isDisabled: true,
+          isSaving: true,
+        });
+        break;
+      case State.DELETING:
+        this.#tripEditComponent.updateData({
+          isDisabled: true,
+          isDeleting: true,
+        });
+        break;
+      case State.ABORTING:
+        this.#tripComponent.shake(resetFormState);
+        this.#tripEditComponent.shake(resetFormState);
+        break;
+    }
+  }
+
   #handleEditClick = () => {
     if (this.#mode === Mode.DEFAULT) {
       this.#replaceTripToForm();
-      document.addEventListener('keydown', this.#handleEscKeyDown);
     } else {
       this.#tripEditComponent.reset(this.#trip);
       this.#replaceFormToTrip();
@@ -99,7 +138,7 @@ export default class TripItemPresenter {
   }
 
   #handleFormSubmit = (trip) => {
-    this.#replaceFormToTrip();
+    //this.#replaceFormToTrip();
     this.#changeData(
       UserAction.UPDATE_DATA,
       UpdateType.PATCH,
@@ -107,7 +146,7 @@ export default class TripItemPresenter {
   }
 
   #handleDeleteClick = (trip) => {
-    this.destroy();
+    //this.destroy();
     this.#changeData(
       UserAction.DELETE_DATA,
       UpdateType.MINOR,
