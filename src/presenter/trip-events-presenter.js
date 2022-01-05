@@ -7,6 +7,7 @@ import { Mode } from '../constants.js';
 import NoTripView from '../views/no-trip-view.js';
 import { RenderPosition } from '../constants.js';
 import { remove, render } from '../utils/render.js';
+import { State as TripPresenterViewState } from './trip-item-presenter.js';
 import SortView from '../views/sort-view.js';
 import { SortType } from '../constants.js';
 import { sortNumber } from '../utils/common.js';
@@ -190,16 +191,31 @@ export default class TripEventsPresenter {
     this.#tripItemPresenters.forEach((presenter) => presenter.resetTripView());
   }
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_DATA:
-        this.#tripsModel.updateData(updateType, update);
+        this.#tripItemPresenters.get(update.id).setViewState(TripPresenterViewState.SAVING);
+        try {
+          await this.#tripsModel.updateData(updateType, update);
+        } catch(err) {
+          this.#tripItemPresenters.get(update.id).setViewState(TripPresenterViewState.ABORTING);
+        }
         break;
       case UserAction.ADD_DATA:
-        this.#tripsModel.addData(updateType, update);
+        this.#tripNewPresenter.setSaving();
+        try {
+          await this.#tripsModel.addData(updateType, update);
+        } catch(err) {
+          this.#tripNewPresenter.setAborting();
+        }
         break;
       case UserAction.DELETE_DATA:
-        this.#tripsModel.deleteData(updateType, update);
+        this.#tripItemPresenters.get(update.id).setViewState(TripPresenterViewState.DELETING);
+        try {
+          await this.#tripsModel.deleteData(updateType, update);
+        } catch(err) {
+          this.#tripItemPresenters.get(update.id).setViewState(TripPresenterViewState.ABORTING);
+        }
         break;
     }
   }

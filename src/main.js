@@ -5,7 +5,7 @@ import StatisticPresenter from './presenter/statistic-presenter.js';
 import TripMainPresenter from './presenter/trip-main-presenter.js';
 import TripEventsPresenter from './presenter/trip-events-presenter.js';
 
-const AUTHORIZATION = 'Basic lkjuhfiub7623r8fwqiuvcg';
+const AUTHORIZATION = 'Basic lkjuhfiub7oifiuvcg';
 const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
 
 const tripsModel = new DataModel(new ApiService(END_POINT, AUTHORIZATION));
