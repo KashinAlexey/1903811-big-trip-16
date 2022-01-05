@@ -1,10 +1,12 @@
 import FilterPresenter from './filter-presenter.js';
+import { LoadingType } from '../constants.js';
 import { MenuItem } from '../constants.js';
 import { RenderPosition } from '../constants.js';
 import { remove } from '../utils/render.js';
 import { render } from '../utils/render.js';
 import TripNavigationView from '../views/navigation-view.js';
 import TripInfoView from '../views/trip-info-view.js';
+
 export default class TripMainPresenter {
   #tripsModel = null;
   #filterModel = null;
@@ -40,12 +42,16 @@ export default class TripMainPresenter {
     this.#tripEventsPresenter = tripEventsPresenter;
     this.#statisticPresenter = statisticPresenter;
 
-    this.renderTripControls();
+    this.#tripEventsPresenter.init(this.renderTripInfo, LoadingType.LOADING);
 
     this.#tripsModel.init().finally(() => {
-      this.#tripEventsPresenter.init(this.renderTripInfo);
-    }
-    );
+      if (this.#tripsModel.data !== null) {
+        this.renderTripControls();
+        this.#tripEventsPresenter.init(this.renderTripInfo, LoadingType.SUCCESS);
+      } else {
+        this.#tripEventsPresenter.init(this.renderTripInfo, LoadingType.ERROR);
+      }
+    });
   }
 
   renderTripInfo = (tripCount) => {

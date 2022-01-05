@@ -1,5 +1,8 @@
+import ErrorView from '../views/error-view.js';
 import { filter } from '../utils/filter.js';
 import { FilterType } from '../constants.js';
+import LoadingView from '../views/loading-view.js';
+import { LoadingType } from '../constants.js';
 import { Mode } from '../constants.js';
 import NoTripView from '../views/no-trip-view.js';
 import { RenderPosition } from '../constants.js';
@@ -22,6 +25,7 @@ export default class TripEventsPresenter {
   #tripEventsListComponent = new TripListView();
   #sortComponent = null;
   #noTripComponent = null;
+  #loadingComponent = null;
 
   #tripItemPresenters = new Map();
   #tripNewPresenter = null;
@@ -31,6 +35,7 @@ export default class TripEventsPresenter {
 
   #updateTripInfo = null;
   #mode = Mode.DEFAULT;
+  #loadingType = null;
 
   constructor (tripsModel, filterModel, tripEventsElement) {
     this.#tripsModel = tripsModel;
@@ -59,7 +64,8 @@ export default class TripEventsPresenter {
     return filteredTrips;
   }
 
-  init = (callBack) => {
+  init = (callBack, loadyngType) => {
+    this.#loadingType = loadyngType;
     this.#tripsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
 
@@ -87,6 +93,17 @@ export default class TripEventsPresenter {
   }
 
   #renderTripEvents = () => {
+    if (this.#loadingType === LoadingType.LOADING) {
+      this.#renderLoading();
+      return;
+    } else if (this.#loadingType === LoadingType.ERROR) {
+      remove(this.#loadingComponent);
+      this.#renderError();
+      return;
+    } else {
+      remove(this.#loadingComponent);
+    }
+
     const trips = this.trips;
     const tripCount = trips.length;
 
@@ -138,6 +155,18 @@ export default class TripEventsPresenter {
 
     this.#noTripComponent = new NoTripView(this.#filterType);
     render(this.#tripEventsElement, this.#noTripComponent, RenderPosition.BEFOREEND);
+  }
+
+  #renderLoading = () => {
+    render(this.#tripEventsElement, this.#tripEventsListComponent, RenderPosition.BEFOREEND);
+    this.#loadingComponent = new LoadingView();
+    render(this.#tripEventsElement, this.#loadingComponent, RenderPosition.BEFOREEND);
+  }
+
+  #renderError = () => {
+    render(this.#tripEventsElement, this.#tripEventsListComponent, RenderPosition.BEFOREEND);
+    this.#loadingComponent = new ErrorView();
+    render(this.#tripEventsElement, this.#loadingComponent, RenderPosition.BEFOREEND);
   }
 
   #renderTripItem = (trip) => {

@@ -63,3 +63,9 @@ export const Method = {
   POST: 'POST',
   DELETE: 'DELETE',
 };
+
+export const LoadingType = {
+  LOADING: 'LOADING',
+  SUCCESS: 'SUCCESS',
+  ERROR: 'ERROR'
+};
