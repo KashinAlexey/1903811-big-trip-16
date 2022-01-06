@@ -1,5 +1,6 @@
 import FilterView from '../views/filter-view.js';
 import { FilterType } from '../constants.js';
+import { filter } from '../utils/filter.js';
 import { replace, remove } from '../utils/render.js';
 import { RenderPosition } from '../constants.js';
 import { render } from '../utils/render.js';
@@ -19,18 +20,23 @@ export default class FilterPresenter {
   }
 
   get filters() {
+    const trips = this.#tripsModel.data;
+
     return [
       {
         type: FilterType.EVERYTHING,
         name: 'EVERYTHING',
+        count: filter[FilterType.EVERYTHING](trips).length,
       },
       {
         type: FilterType.FUTURE,
         name: 'FUTURE',
+        count: filter[FilterType.FUTURE](trips).length,
       },
       {
         type: FilterType.PAST,
         name: 'PAST',
+        count: filter[FilterType.PAST](trips).length,
       },
     ];
   }
