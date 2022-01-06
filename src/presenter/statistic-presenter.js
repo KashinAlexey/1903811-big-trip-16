@@ -117,7 +117,6 @@ export default class StatisticPresenter {
   constructor (tripsModel, tripEventsElement) {
     this.#tripsModel = tripsModel;
     this.#tripEventsElement = tripEventsElement;
-
     this.#statsComponent = new StatsView();
   }
 

@@ -1,3 +1,6 @@
+export const AUTHORIZATION = 'Basic lkjuhfiub7oifiuvcg1';
+export const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
+
 export const RenderPosition = {
   BEFOREBEGIN: 'beforebegin',
   AFTERBEGIN: 'afterbegin',
@@ -70,4 +73,10 @@ export const LoadingType = {
   LOADING: 'LOADING',
   SUCCESS: 'SUCCESS',
   ERROR: 'ERROR'
+};
+
+export const State = {
+  SAVING: 'SAVING',
+  DELETING: 'DELETING',
+  ABORTING: 'ABORTING',
 };
