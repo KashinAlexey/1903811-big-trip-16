@@ -22,7 +22,6 @@ export default class TripItemAddPresenter {
     }
 
     this.#callback = callBack;
-
     this.#tripAddComponent = new TripAddView(destinations, offers);
 
     this.#tripAddComponent.setFormSubmitHandler(this.#handleFormSubmit);
@@ -39,7 +38,6 @@ export default class TripItemAddPresenter {
 
     remove(this.#tripAddComponent);
     this.#tripAddComponent = null;
-
     document.removeEventListener('keydown', this.#handleEscKeyDown);
   }
 

@@ -15,7 +15,6 @@ export default class TripMainPresenter {
   #tripNavigationContainer = null;
   #tripFiltersContainer = null;
   #tripEventAddBtnContainer = null;
-
   #tripNavigationComponent = null;
   #tripInfoComponent = null;
   #tripEventsPresenter = null;

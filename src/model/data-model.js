@@ -10,6 +10,10 @@ export default class DataModel extends AbstractObservable {
     this.#apiService = apiService;
   }
 
+  get data() {
+    return this.#data;
+  }
+
   init = async () => {
     try {
       const data = await this.#apiService.data;
@@ -21,10 +25,6 @@ export default class DataModel extends AbstractObservable {
     } catch(err) {
       this.#data = null;
     }
-  }
-
-  get data() {
-    return this.#data;
   }
 
   getDestinations() {

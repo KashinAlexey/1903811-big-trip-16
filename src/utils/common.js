@@ -1,8 +1,6 @@
 import dayjs from 'dayjs';
 
 // Working with date-time
-export const getKeyByValue = (object, value) => Object.keys(object).find((key) => object[key] === value);
-
 export const formatDate = (date, dayFormat = 'YYYY-MM-DDTHH:mm:ss.sssZ') => dayjs(date).format(dayFormat);
 
 export const isDateAfter = (date) => date && dayjs().isAfter(date, 'D');
@@ -16,7 +14,7 @@ export const calculateDateDiff = (startDay, endDay) => {
   let timeString;
 
   if (dateDiff < 60 ) {
-    timeString = `${`0${dateDiff}`.slice(-2)}M`;
+    timeString = `${`0${Math.trunc(dateDiff)}`.slice(-2)}M`;
   } else if (dateDiff < 1440) {
     timeString = `${`0${Math.trunc(dateDiff / 60)}`.slice(-2)}H ${`0${Math.trunc(dateDiff % 60)}`.slice(-2)}M`;
   } else {
@@ -24,34 +22,6 @@ export const calculateDateDiff = (startDay, endDay) => {
   }
 
   return timeString;
-};
-
-// Updating item in array
-export const updateItem = (items, update) => {
-  const index = items.findIndex((item) => item.id === update.id);
-
-  if (index === -1) {
-    return items;
-  }
-
-  return [
-    ...items.slice(0, index),
-    update,
-    ...items.slice(index + 1),
-  ];
-};
-
-export const deleteItem = (items, update) => {
-  const index = items.findIndex((item) => item.id === update.id);
-
-  if (index === -1) {
-    return items;
-  }
-
-  return [
-    ...items.slice(0, index),
-    ...items.slice(index + 1),
-  ];
 };
 
 // Compare functions in arr.sort(foo)

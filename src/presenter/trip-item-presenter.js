@@ -3,24 +3,17 @@ import { RenderPosition } from '../constants.js';
 import { remove } from '../utils/render.js';
 import { render } from '../utils/render.js';
 import { replace } from '../utils/render.js';
+import { State } from '../constants.js';
 import TripView from '../views/trip-view';
 import TripEditView from '../views/trip-edit-view';
 import { UserAction } from '../constants.js';
 import { UpdateType } from '../constants.js';
-
-export const State = {
-  SAVING: 'SAVING',
-  DELETING: 'DELETING',
-  ABORTING: 'ABORTING',
-};
 export default class TripItemPresenter {
   #tripEventsList = null;
   #changeMode = null;
   #changeData = null;
-
   #tripComponent = null;
   #tripEditComponent = null;
-
   #trip = null;
   #mode = Mode.DEFAULT;
 
@@ -138,7 +131,6 @@ export default class TripItemPresenter {
   }
 
   #handleFormSubmit = (trip) => {
-    //this.#replaceFormToTrip();
     this.#changeData(
       UserAction.UPDATE_DATA,
       UpdateType.PATCH,
@@ -146,7 +138,6 @@ export default class TripItemPresenter {
   }
 
   #handleDeleteClick = (trip) => {
-    //this.destroy();
     this.#changeData(
       UserAction.DELETE_DATA,
       UpdateType.MINOR,

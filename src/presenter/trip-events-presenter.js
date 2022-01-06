@@ -6,8 +6,9 @@ import { LoadingType } from '../constants.js';
 import { Mode } from '../constants.js';
 import NoTripView from '../views/no-trip-view.js';
 import { RenderPosition } from '../constants.js';
-import { remove, render } from '../utils/render.js';
-import { State as TripPresenterViewState } from './trip-item-presenter.js';
+import { remove } from '../utils/render.js';
+import { render } from '../utils/render.js';
+import { State as TripPresenterViewState } from '../constants.js';
 import SortView from '../views/sort-view.js';
 import { SortType } from '../constants.js';
 import { sortNumber } from '../utils/common.js';
@@ -42,7 +43,6 @@ export default class TripEventsPresenter {
     this.#tripsModel = tripsModel;
     this.#filterModel = filterModel;
     this.#tripEventsElement = tripEventsElement;
-
     this.#tripNewPresenter = new TripItemAddPresenter(this.#tripEventsListComponent, this.#handleViewAction);
   }
 
@@ -58,7 +58,7 @@ export default class TripEventsPresenter {
       case SortType.time:
         trips.sort((tripA, tripB) => sortDuration(tripA.dateFrom, tripA.dateTo, tripB.dateFrom, tripB.dateTo, 'Up'));
         break;
-      default:
+      case SortType.day:
         trips.sort((tripA, tripB) => sortDate(tripA.dateFrom, tripB.dateFrom, 'Up'));
     }
 
@@ -69,7 +69,6 @@ export default class TripEventsPresenter {
     this.#loadingType = loadyngType;
     this.#tripsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
-
     this.#updateTripInfo = callBack;
     this.#renderTripEvents();
   }
@@ -107,7 +106,6 @@ export default class TripEventsPresenter {
 
     const trips = this.trips;
     const tripCount = trips.length;
-
     this.#updateTripInfo(tripCount);
 
     if (tripCount === 0) {
@@ -153,7 +151,6 @@ export default class TripEventsPresenter {
 
   #renderNoTrip = () => {
     render(this.#tripEventsElement, this.#tripEventsListComponent, RenderPosition.BEFOREEND);
-
     this.#noTripComponent = new NoTripView(this.#filterType);
     render(this.#tripEventsElement, this.#noTripComponent, RenderPosition.BEFOREEND);
   }
@@ -220,10 +217,11 @@ export default class TripEventsPresenter {
     }
   }
 
-  #handleModelEvent = (updateType, data) => {
+  #handleModelEvent = (updateType) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        this.#tripItemPresenters.get(data.id).init(data, this.#tripsModel.getDestinations(), this.#tripsModel.getOffers());
+        this.#clearTripEvents();
+        this.#renderTripEvents();
         this.#updateTripInfo();
         break;
       case UpdateType.MINOR:
