@@ -72,7 +72,7 @@ export const Method = {
 export const LoadingType = {
   LOADING: 'LOADING',
   SUCCESS: 'SUCCESS',
-  ERROR: 'ERROR'
+  ERROR: 'ERROR',
 };
 
 export const State = {
