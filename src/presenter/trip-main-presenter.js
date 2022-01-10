@@ -4,7 +4,7 @@ import { MenuItem } from '../constants.js';
 import { RenderPosition } from '../constants.js';
 import { remove } from '../utils/render.js';
 import { render } from '../utils/render.js';
-import TripNavigationView from '../views/navigation-view.js';
+import TripNavigationView from '../views/trip-navigation-view.js';
 import TripInfoView from '../views/trip-info-view.js';
 
 export default class TripMainPresenter {

@@ -8,8 +8,6 @@ export const RenderPosition = {
   AFTEREND: 'afterend',
 };
 
-export const TRIP_COUNT = 5;
-
 export const SHAKE_ANIMATION_TIMEOUT = 600;
 
 export const TRIP_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
